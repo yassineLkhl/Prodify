@@ -1,0 +1,18 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: prodify_postgres
+    restart: always
+    environment:
+      POSTGRES_DB: prodify
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - prodify_pgdata:/var/lib/postgresql/data
+
+volumes:
+  prodify_pgdata:
