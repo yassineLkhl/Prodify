@@ -3,11 +3,13 @@ package com.prodify.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -15,26 +17,29 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     private final AuthenticationProvider authenticationProvider;
+    private final JwtAuthenticationFilter jwtAuthFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            // 1. Désactiver CSRF (Syntaxe explicite Spring Security 6)
             .csrf(csrf -> csrf.disable())
-
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**").permitAll() // Login/Register : OK pour tout le monde
-                .requestMatchers("/api/health").permitAll()  // Health : OK
-                .anyRequest().authenticated()                // TOUT LE RESTE : Interdit sans Token ! 🔒
-            )
+                // 1. Les routes publiques (Auth & Health)
+                .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/api/health").permitAll()
+                
+                // 2. Le Catalogue Producteurs (Lecture seule = Public)
+                // Attention : l'ordre compte ! Celle-ci doit être AVANT le anyRequest
+                .requestMatchers(HttpMethod.GET, "/api/producers", "/api/producers/**").permitAll()
 
-            // 3. Pas de session (Stateless)
+                // 3. Tout le reste = Privé (Token obligatoire)
+                .anyRequest().authenticated()
+            )
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
-
-            // 4. Provider d'authentification
-            .authenticationProvider(authenticationProvider);
+            .authenticationProvider(authenticationProvider)
+            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
