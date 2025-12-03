@@ -29,8 +29,10 @@ public class SecurityConfig {
                 .requestMatchers("/api/health").permitAll()
                 
                 // 2. Le Catalogue Producteurs (Lecture seule = Public)
-                // Attention : l'ordre compte ! Celle-ci doit être AVANT le anyRequest
                 .requestMatchers(HttpMethod.GET, "/api/producers", "/api/producers/**").permitAll()
+
+                // Tracks (Public en lecture)
+                .requestMatchers(HttpMethod.GET, "/api/tracks", "/api/tracks/**").permitAll()
 
                 // 3. Tout le reste = Privé (Token obligatoire)
                 .anyRequest().authenticated()
