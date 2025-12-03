@@ -1,0 +1,50 @@
+package com.prodify.api.controller;
+
+import com.prodify.api.dto.track.TrackRequest;
+import com.prodify.api.model.Track;
+import com.prodify.api.model.User;
+import com.prodify.api.service.TrackService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.UUID;
+
+@RestController
+@RequestMapping("/api/tracks")
+@RequiredArgsConstructor
+public class TrackController {
+
+    private final TrackService trackService;
+
+    // 1. Créer une Track (Sécurisé)
+    @PostMapping
+    public ResponseEntity<Track> createTrack(
+            @RequestBody TrackRequest request,
+            Authentication authentication
+    ) {
+        User user = (User) authentication.getPrincipal();
+        return ResponseEntity.ok(trackService.createTrack(user, request));
+    }
+
+    // 2. Lister toutes les Tracks (Public)
+    @GetMapping
+    public ResponseEntity<List<Track>> getAllTracks() {
+        return ResponseEntity.ok(trackService.getAllTracks());
+    }
+
+    // 3. Voir une Track spécifique (Public)
+    @GetMapping("/{id}")
+    public ResponseEntity<Track> getTrackById(@PathVariable UUID id) {
+        return ResponseEntity.ok(trackService.getTrackById(id));
+    }
+
+    // 4. Voir les Tracks d'un producteur spécifique (Public)
+    // URL : /api/tracks/producer/{producerId}
+    @GetMapping("/producer/{producerId}")
+    public ResponseEntity<List<Track>> getTracksByProducer(@PathVariable UUID producerId) {
+        return ResponseEntity.ok(trackService.getTracksByProducer(producerId));
+    }
+}
