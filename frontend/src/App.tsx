@@ -1,17 +1,28 @@
+import { Routes, Route } from 'react-router-dom';
+import MainLayout from './components/MainLayout';
+import HomePage from './pages/HomePage';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
+import ProducerDashboard from './pages/ProducerDashboard';
+
 function App() {
   return (
-    <div className="min-h-screen bg-slate-900 text-white flex items-center justify-center flex-col gap-4">
-      <h1 className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
-        Prodify Frontend 🚀
-      </h1>
-      <p className="text-slate-400">
-        Si tu vois ce texte stylisé, Tailwind fonctionne !
-      </p>
-      <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors font-semibold">
-        Bouton Test
-      </button>
-    </div>
-  )
+    <Routes>
+      {/* Route Parent : Le Layout global */}
+      <Route path="/" element={<MainLayout />}>
+        
+        {/* Routes Enfants (qui s'affichent dans l'Outlet) */}
+        <Route index element={<HomePage />} />
+        <Route path="login" element={<LoginPage />} />
+        <Route path="register" element={<RegisterPage />} />
+        <Route path="dashboard" element={<ProducerDashboard />} />
+        
+        {/* Route 404 (Catch-all) */}
+        <Route path="*" element={<div className="text-white p-10">Page introuvable 404</div>} />
+        
+      </Route>
+    </Routes>
+  );
 }
 
-export default App
+export default App;
