@@ -1,5 +1,6 @@
 import { Outlet } from 'react-router-dom';
 import Navbar from './Navbar';
+import AudioPlayer from './AudioPlayer';
 
 export default function MainLayout() {
   return (
@@ -8,11 +9,11 @@ export default function MainLayout() {
       <Navbar />
 
       {/* 2. Le contenu changeant de la page */}
-      <main>
+      <main className="pb-28">
         <Outlet />
       </main>
 
-      {/* (Optionnel) Ici, on mettra le Player Audio fixe plus tard */}
+      <AudioPlayer />
     </div>
   );
 }
