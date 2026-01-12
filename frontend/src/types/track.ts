@@ -16,3 +16,14 @@ export interface Track {
   bpm?: number | null;
 }
 
+export interface TrackRequest {
+  title: string;
+  description?: string;
+  price: number;
+  bpm?: number;
+  genre?: string;
+  mood?: string;
+  coverImageUrl: string;
+  audioUrl: string;
+}
+
