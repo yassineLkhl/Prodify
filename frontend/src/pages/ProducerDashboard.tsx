@@ -5,14 +5,13 @@ import {
   Activity,
   Tag,
   Smile,
-  Image,
-  FileAudio,
   FileText,
   Plus,
   X,
 } from 'lucide-react';
 import { trackService } from '../services/track.service';
 import type { TrackRequest } from '../types/track';
+import FileUpload from '../components/ui/FileUpload';
 
 export default function ProducerDashboard() {
   const [showForm, setShowForm] = useState(false);
@@ -237,47 +236,23 @@ export default function ProducerDashboard() {
               </div>
             </div>
 
-            <div className="space-y-1">
-              <label className="text-sm font-medium text-slate-300">
-                URL de l'image de couverture <span className="text-red-400">*</span>
-              </label>
-              <div className="relative">
-                <Image className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-500" />
-                <input
-                  name="coverImageUrl"
-                  type="url"
-                  required
-                  value={formData.coverImageUrl}
-                  onChange={handleChange}
-                  className="w-full bg-slate-950 border border-slate-700 rounded-lg py-2.5 pl-10 pr-4 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="https://example.com/cover.jpg"
-                />
-              </div>
-              <p className="text-xs text-slate-500 mt-1">
-                Entrez une URL valide (ex: lien image direct)
-              </p>
-            </div>
+            <FileUpload
+              label="Image de couverture"
+              accept="image/*"
+              onFileSelect={(url) => {
+                setFormData({ ...formData, coverImageUrl: url });
+              }}
+              currentUrl={formData.coverImageUrl}
+            />
 
-            <div className="space-y-1">
-              <label className="text-sm font-medium text-slate-300">
-                URL du fichier audio <span className="text-red-400">*</span>
-              </label>
-              <div className="relative">
-                <FileAudio className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-500" />
-                <input
-                  name="audioUrl"
-                  type="url"
-                  required
-                  value={formData.audioUrl}
-                  onChange={handleChange}
-                  className="w-full bg-slate-950 border border-slate-700 rounded-lg py-2.5 pl-10 pr-4 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="https://example.com/track.mp3"
-                />
-              </div>
-              <p className="text-xs text-slate-500 mt-1">
-                Entrez une URL valide (ex: lien MP3 direct)
-              </p>
-            </div>
+            <FileUpload
+              label="Fichier audio"
+              accept="audio/*"
+              onFileSelect={(url) => {
+                setFormData({ ...formData, audioUrl: url });
+              }}
+              currentUrl={formData.audioUrl}
+            />
 
             <div className="flex gap-3 pt-4">
               <button
