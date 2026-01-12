@@ -10,6 +10,11 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration; // <--- Import
+import org.springframework.web.cors.CorsConfigurationSource; // <--- Import
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource; // <--- Import
+
+import java.util.List; // <--- Import
 
 @Configuration
 @EnableWebSecurity
@@ -22,19 +27,15 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+            // 1. On active la gestion CORS au niveau Sécurité
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                // 1. Les routes publiques (Auth & Health)
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/api/health").permitAll()
-                
-                // 2. Le Catalogue Producteurs (Lecture seule = Public)
                 .requestMatchers(HttpMethod.GET, "/api/producers", "/api/producers/**").permitAll()
-
-                // Tracks (Public en lecture)
                 .requestMatchers(HttpMethod.GET, "/api/tracks", "/api/tracks/**").permitAll()
-
-                // 3. Tout le reste = Privé (Token obligatoire)
                 .anyRequest().authenticated()
             )
             .sessionManagement(session -> session
@@ -44,5 +45,27 @@ public class SecurityConfig {
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+    }
+
+    // 2. On définit les règles CORS ici
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        
+        // Autoriser le Frontend
+        configuration.setAllowedOrigins(List.of("http://localhost:5173"));
+        
+        // Autoriser les verbes HTTP
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        
+        // Autoriser les headers (Surtout Authorization pour le Token !)
+        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+        
+        // Autoriser les cookies/auth headers
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 }
