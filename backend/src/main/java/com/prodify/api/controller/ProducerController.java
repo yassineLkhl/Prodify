@@ -48,4 +48,11 @@ public class ProducerController {
     public ResponseEntity<Producer> getProducerById(@PathVariable UUID id) {
         return ResponseEntity.ok(producerService.getProducerById(id));
     }
+
+    // Récupérer le producteur de l'utilisateur connecté
+    @GetMapping("/me")
+    public ResponseEntity<Producer> getMyProducer(Authentication authentication) {
+        User user = (User) authentication.getPrincipal();
+        return ResponseEntity.ok(producerService.getProducerByUser(user));
+    }
 }

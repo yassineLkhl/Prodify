@@ -3,7 +3,7 @@ import { Music, User, LogOut } from 'lucide-react'; // Ajout LogOut
 import { useAuth } from '../context/AuthContext'; // Import du hook
 
 export default function Navbar() {
-  const { isAuthenticated, logout } = useAuth(); // On récupère l'état
+  const { isAuthenticated, logout, user } = useAuth(); // On récupère l'état
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -30,13 +30,20 @@ export default function Navbar() {
 
             {/* LOGIQUE DYNAMIQUE ICI 👇 */}
             {isAuthenticated ? (
-              <button 
-                onClick={handleLogout}
-                className="flex items-center gap-2 text-sm font-medium text-red-400 hover:text-red-300 transition-colors"
-              >
-                <LogOut className="h-4 w-4" />
-                Déconnexion
-              </button>
+              <div className="flex items-center gap-4">
+                {user && (
+                  <span className="text-sm font-medium text-slate-300">
+                    {user.firstName} {user.lastName}
+                  </span>
+                )}
+                <button 
+                  onClick={handleLogout}
+                  className="flex items-center gap-2 text-sm font-medium text-red-400 hover:text-red-300 transition-colors"
+                >
+                  <LogOut className="h-4 w-4" />
+                  Déconnexion
+                </button>
+              </div>
             ) : (
               <>
                 <Link to="/login" className="text-sm font-medium hover:text-white text-slate-300">

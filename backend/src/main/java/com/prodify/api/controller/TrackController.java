@@ -47,4 +47,15 @@ public class TrackController {
     public ResponseEntity<List<Track>> getTracksByProducer(@PathVariable UUID producerId) {
         return ResponseEntity.ok(trackService.getTracksByProducer(producerId));
     }
+
+    // 5. Supprimer une Track (Sécurisé - uniquement le propriétaire)
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteTrack(
+            @PathVariable UUID id,
+            Authentication authentication
+    ) {
+        User user = (User) authentication.getPrincipal();
+        trackService.deleteTrack(id, user);
+        return ResponseEntity.noContent().build();
+    }
 }

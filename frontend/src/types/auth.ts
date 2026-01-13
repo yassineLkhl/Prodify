@@ -12,7 +12,17 @@ export interface RegisterRequest {
     password: string;
   }
   
-  // Ce que le backend nous renvoie (le Token)
+  // Informations utilisateur renvoyées par le backend
+  export interface User {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    producerId: string | null; // null si l'utilisateur n'est pas producteur
+  }
+  
+  // Ce que le backend nous renvoie (le Token + User)
   export interface AuthResponse {
     token: string;
+    user: User;
   }

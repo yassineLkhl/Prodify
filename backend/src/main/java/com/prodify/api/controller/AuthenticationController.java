@@ -3,9 +3,13 @@ package com.prodify.api.controller;
 import com.prodify.api.dto.auth.AuthenticationRequest;
 import com.prodify.api.dto.auth.AuthenticationResponse;
 import com.prodify.api.dto.auth.RegisterRequest;
+import com.prodify.api.dto.auth.UserDTO;
+import com.prodify.api.model.User;
 import com.prodify.api.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,5 +30,11 @@ public class AuthenticationController {
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {
         return ResponseEntity.ok(service.authenticate(request));
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<UserDTO> getCurrentUser(Authentication authentication) {
+        User user = (User) authentication.getPrincipal();
+        return ResponseEntity.ok(service.convertToUserDTO(user));
     }
 }

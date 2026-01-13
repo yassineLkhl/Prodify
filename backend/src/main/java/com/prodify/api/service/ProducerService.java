@@ -51,6 +51,12 @@ public class ProducerService {
         return producerRepository.findAll();
     }
 
+    // 6. Récupérer le producteur de l'utilisateur connecté
+    public Producer getProducerByUser(User user) {
+        return producerRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new RuntimeException("Profil producteur non trouvé"));
+    }
+
     // --- Utilitaire pour transformer "DJ Yassine !" en "dj-yassine" ---
     private String generateSlug(String input) {
         String slug = toSlug(input);

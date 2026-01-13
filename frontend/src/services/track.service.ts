@@ -10,5 +10,12 @@ export const trackService = {
     const { data: track } = await api.post<Track>('/tracks', data);
     return track;
   },
+  async getTracksByProducer(producerId: string): Promise<Track[]> {
+    const { data } = await api.get<Track[]>(`/tracks/producer/${producerId}`);
+    return data;
+  },
+  async deleteTrack(id: string): Promise<void> {
+    await api.delete(`/tracks/${id}`);
+  },
 };
 
