@@ -1,5 +1,5 @@
 import api from './api';
-import type { AuthResponse, LoginRequest, RegisterRequest } from '../types/auth';
+import type { AuthResponse, LoginRequest, RegisterRequest, User } from '../types/auth';
 
 export const authService = {
   // Fonction d'inscription
@@ -14,8 +14,15 @@ export const authService = {
     return response.data;
   },
 
+  // Récupérer les informations de l'utilisateur connecté
+  getMe: async (): Promise<User> => {
+    const response = await api.get<User>('/auth/me');
+    return response.data;
+  },
+
   // Utilitaire pour déconnecter (supprimer le token)
   logout: () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
   }
 };

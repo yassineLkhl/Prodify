@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Music,
   DollarSign,
@@ -8,16 +8,22 @@ import {
   FileText,
   Plus,
   X,
+  Trash2,
 } from 'lucide-react';
 import { trackService } from '../services/track.service';
-import type { TrackRequest } from '../types/track';
+import { useAuth } from '../context/AuthContext';
+import type { TrackRequest, Track } from '../types/track';
 import FileUpload from '../components/ui/FileUpload';
 
 export default function ProducerDashboard() {
+  const { user } = useAuth();
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [tracks, setTracks] = useState<Track[]>([]);
+  const [loadingTracks, setLoadingTracks] = useState(false);
+  const [deletingTrackId, setDeletingTrackId] = useState<string | null>(null);
 
   const [formData, setFormData] = useState<TrackRequest>({
     title: '',
@@ -29,6 +35,45 @@ export default function ProducerDashboard() {
     coverImageUrl: '',
     audioUrl: '',
   });
+
+  // Charger les tracks du producteur au montage
+  useEffect(() => {
+    const loadTracks = async () => {
+      // Vérifier si l'utilisateur est producteur
+      if (!user || !user.producerId) {
+        setError('Vous devez être producteur pour accéder à cette page.');
+        setLoadingTracks(false);
+        return;
+      }
+
+      try {
+        setLoadingTracks(true);
+        const producerTracks = await trackService.getTracksByProducer(user.producerId);
+        setTracks(producerTracks);
+      } catch (err: unknown) {
+        setError(
+          err instanceof Error
+            ? err.message
+            : 'Erreur lors du chargement des données.'
+        );
+      } finally {
+        setLoadingTracks(false);
+      }
+    };
+
+    loadTracks();
+  }, [user]);
+
+  // Fonction pour rafraîchir la liste des tracks
+  const refreshTracks = async () => {
+    if (!user || !user.producerId) return;
+    try {
+      const producerTracks = await trackService.getTracksByProducer(user.producerId);
+      setTracks(producerTracks);
+    } catch (err: unknown) {
+      console.error('Erreur lors du rafraîchissement:', err);
+    }
+  };
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -66,6 +111,8 @@ export default function ProducerDashboard() {
         coverImageUrl: '',
         audioUrl: '',
       });
+      // Rafraîchir la liste des tracks
+      await refreshTracks();
       // Hide form after 2 seconds
       setTimeout(() => {
         setShowForm(false);
@@ -82,6 +129,27 @@ export default function ProducerDashboard() {
     }
   };
 
+  const handleDeleteTrack = async (trackId: string) => {
+    if (!confirm('Êtes-vous sûr de vouloir supprimer cette track ?')) {
+      return;
+    }
+
+    setDeletingTrackId(trackId);
+    try {
+      await trackService.deleteTrack(trackId);
+      // Rafraîchir la liste des tracks
+      await refreshTracks();
+    } catch (err: unknown) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : 'Erreur lors de la suppression de la track.'
+      );
+    } finally {
+      setDeletingTrackId(null);
+    }
+  };
+
   return (
     <div className="p-8 text-white">
       <div className="mb-8">
@@ -89,15 +157,113 @@ export default function ProducerDashboard() {
         <p className="text-gray-400">Gérez vos instrumentales ici.</p>
       </div>
 
-      {!showForm ? (
-        <button
-          type="button"
-          onClick={() => setShowForm(true)}
-          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg transition-colors"
-        >
-          <Plus size={20} />
-          Ajouter une nouvelle Track
-        </button>
+      {error && !showForm && (
+        <div className="bg-red-500/10 border border-red-500/50 text-red-500 p-3 rounded-lg mb-6 text-sm">
+          {error}
+        </div>
+      )}
+
+      {!user || !user.producerId ? (
+        <div className="bg-yellow-500/10 border border-yellow-500/50 text-yellow-500 p-4 rounded-lg">
+          Vous devez être producteur pour accéder à cette page. Veuillez créer un profil producteur.
+        </div>
+      ) : !showForm ? (
+        <>
+          <div className="mb-6">
+            <button
+              type="button"
+              onClick={() => setShowForm(true)}
+              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg transition-colors"
+            >
+              <Plus size={20} />
+              Ajouter une nouvelle Track
+            </button>
+          </div>
+
+          {/* Liste des tracks */}
+          <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
+            <div className="p-6 border-b border-slate-800">
+              <h2 className="text-xl font-bold">Mes Tracks ({tracks.length})</h2>
+            </div>
+
+            {loadingTracks ? (
+              <div className="p-8 text-center text-slate-400">
+                Chargement...
+              </div>
+            ) : tracks.length === 0 ? (
+              <div className="p-8 text-center text-slate-400">
+                Aucune track pour le moment. Créez votre première track !
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-slate-800/50">
+                    <tr>
+                      <th className="px-6 py-4 text-left text-sm font-medium text-slate-300">
+                        Image
+                      </th>
+                      <th className="px-6 py-4 text-left text-sm font-medium text-slate-300">
+                        Titre
+                      </th>
+                      <th className="px-6 py-4 text-left text-sm font-medium text-slate-300">
+                        Prix
+                      </th>
+                      <th className="px-6 py-4 text-right text-sm font-medium text-slate-300">
+                        Actions
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-800">
+                    {tracks.map((track) => (
+                      <tr
+                        key={track.id}
+                        className="hover:bg-slate-800/30 transition-colors"
+                      >
+                        <td className="px-6 py-4">
+                          {track.coverImageUrl ? (
+                            <img
+                              src={track.coverImageUrl}
+                              alt={track.title}
+                              className="w-16 h-16 object-cover rounded-lg"
+                            />
+                          ) : (
+                            <div className="w-16 h-16 bg-slate-700 rounded-lg flex items-center justify-center">
+                              <Music className="h-6 w-6 text-slate-500" />
+                            </div>
+                          )}
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="font-medium">{track.title}</div>
+                          {track.genre && (
+                            <div className="text-sm text-slate-400">
+                              {track.genre}
+                            </div>
+                          )}
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="font-semibold text-blue-400">
+                            {track.price.toFixed(2)} €
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 text-right">
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteTrack(track.id)}
+                            disabled={deletingTrackId === track.id}
+                            className="inline-flex items-center gap-2 px-3 py-2 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            <Trash2 size={18} />
+                            {deletingTrackId === track.id ? 'Suppression...' : 'Supprimer'}
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </>
       ) : (
         <div className="max-w-2xl bg-slate-900 border border-slate-800 rounded-xl p-8 shadow-2xl">
           <div className="flex items-center justify-between mb-6">

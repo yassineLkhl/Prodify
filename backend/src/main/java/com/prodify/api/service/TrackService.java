@@ -64,12 +64,31 @@ public class TrackService {
         return trackRepository.findByProducerId(producerId);
     }
 
+    // --- SUPPRESSION ---
+    public void deleteTrack(UUID id, User user) {
+        // 1. Récupérer la track
+        Track track = trackRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Track introuvable"));
+
+        // 2. Récupérer le profil producteur de l'utilisateur connecté
+        Producer producer = producerRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new RuntimeException("Vous devez être producteur pour supprimer une track."));
+
+        // 3. Vérifier que la track appartient bien au producteur
+        if (!track.getProducer().getId().equals(producer.getId())) {
+            throw new RuntimeException("Vous n'êtes pas autorisé à supprimer cette track.");
+        }
+
+        // 4. Supprimer la track
+        trackRepository.delete(track);
+    }
+
     // --- UTILITAIRE SLUG (Même logique que ProducerService) ---
     // Note : Idéalement, on mettrait ça dans une classe utilitaire commune "SlugUtils" plus tard
     private String generateSlug(String title) {
         String baseSlug = toSlug(title);
         String finalSlug = baseSlug;
-        
+            
         // Si "mon-beat" existe déjà, on tente "mon-beat-123"
         if (trackRepository.existsBySlug(finalSlug)) {
             finalSlug = baseSlug + "-" + System.currentTimeMillis() % 10000;
