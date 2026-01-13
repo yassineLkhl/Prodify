@@ -1,9 +1,11 @@
 import { Link, useNavigate } from 'react-router-dom'; // Ajout useNavigate
-import { Music, User, LogOut } from 'lucide-react'; // Ajout LogOut
+import { Music, User, LogOut, ShoppingCart } from 'lucide-react'; // Ajout LogOut
 import { useAuth } from '../context/AuthContext'; // Import du hook
+import { useCart } from '../context/CartContext';
 
 export default function Navbar() {
   const { isAuthenticated, logout, user } = useAuth(); // On récupère l'état
+  const { itemCount } = useCart();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -24,6 +26,21 @@ export default function Navbar() {
           <div className="flex items-center gap-4">
             <Link to="/dashboard" className="text-sm font-medium hover:text-blue-400 transition-colors">
               Espace Producteur
+            </Link>
+            
+            <div className="h-6 w-px bg-slate-700 mx-2"></div>
+
+            {/* Icône Panier avec badge */}
+            <Link
+              to="/cart"
+              className="relative flex items-center justify-center text-slate-300 transition-colors hover:text-blue-400"
+            >
+              <ShoppingCart className="h-5 w-5" />
+              {itemCount > 0 && (
+                <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500 text-xs font-bold text-white">
+                  {itemCount > 9 ? '9+' : itemCount}
+                </span>
+              )}
             </Link>
             
             <div className="h-6 w-px bg-slate-700 mx-2"></div>
