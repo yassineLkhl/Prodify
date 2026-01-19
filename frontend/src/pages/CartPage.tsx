@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ShoppingCart, Trash2, CheckCircle } from 'lucide-react';
+import { ShoppingCart, Trash2 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { orderService } from '../services/order.service';
+import { paymentService } from '../services/payment.service';
 
 export default function CartPage() {
   const { items, removeFromCart, clearCart, total } = useCart();
@@ -29,26 +30,29 @@ export default function CartPage() {
     setSuccess(false);
 
     try {
+      // 1. Créer l'Order
       const trackIds = items.map((item) => item.id);
-      await orderService.createOrder(trackIds);
+      const order = await orderService.createOrder(trackIds);
       
-      // Vider le panier et afficher le message de succès
+      // 2. Initier le checkout Stripe (AVANT de vider le panier)
+      const checkoutUrl = await paymentService.initiateCheckout(order.id);
+      
+      // 3. Vider le panier UNIQUEMENT si le checkout Stripe a réussi
       clearCart();
-      setSuccess(true);
       
-      // Masquer le message après 3 secondes
-      setTimeout(() => {
-        setSuccess(false);
-        navigate('/');
-      }, 3000);
+      // 4. Rediriger vers Stripe
+      window.location.href = checkoutUrl;
     } catch (err: unknown) {
-      setError(
-        err instanceof Error
-          ? err.message
-          : 'Erreur lors de la validation de la commande.'
-      );
-    } finally {
+      // En cas d'erreur, on garde les items dans le panier pour que l'utilisateur puisse réessayer
+      const errorMessage = err instanceof Error
+        ? err.message
+        : 'Erreur lors de la validation de la commande. Veuillez réessayer.';
+      
+      setError(errorMessage);
       setLoading(false);
+      
+      // Log l'erreur pour le debugging
+      console.error('Erreur lors du checkout:', err);
     }
   };
 
@@ -76,15 +80,6 @@ export default function CartPage() {
           {items.length} {items.length === 1 ? 'track' : 'tracks'} dans votre panier
         </p>
       </div>
-
-      {success && (
-        <div className="mb-6 rounded-lg border border-emerald-500/50 bg-emerald-500/10 p-4">
-          <div className="flex items-center gap-2 text-emerald-400">
-            <CheckCircle className="h-5 w-5" />
-            <span className="font-semibold">Commande validée avec succès ! 🎉</span>
-          </div>
-        </div>
-      )}
 
       {error && (
         <div className="mb-6 rounded-lg border border-red-500/50 bg-red-500/10 p-4 text-red-400">
@@ -155,7 +150,7 @@ export default function CartPage() {
               disabled={loading || items.length === 0}
               className="w-full rounded-lg bg-emerald-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {loading ? 'Validation...' : 'Valider la commande'}
+              {loading ? 'Redirection vers Stripe...' : 'Valider la commande'}
             </button>
             {!isAuthenticated && (
               <p className="mt-2 text-center text-xs text-slate-400">
