@@ -72,6 +72,14 @@ public class OrderService {
         return convertToOrderResponse(savedOrder);
     }
 
+    @Transactional
+    public void validateOrder(UUID orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Commande introuvable avec l'ID: " + orderId));
+        order.setStatus(OrderStatus.COMPLETED);
+        orderRepository.save(order);
+    }
+
     private OrderResponse convertToOrderResponse(Order order) {
         List<OrderItemResponse> items = order.getItems().stream()
                 .map(item -> OrderItemResponse.builder()

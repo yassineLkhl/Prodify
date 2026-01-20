@@ -43,6 +43,7 @@ public class PaymentService {
                 .setSuccessUrl(frontendUrl + "/checkout/success?session_id={CHECKOUT_SESSION_ID}")
                 .setCancelUrl(frontendUrl + "/checkout/cancel")
                 .addAllLineItem(lineItems)
+                .setClientReferenceId(orderId.toString()) // Pour récupérer l'Order ID au webhook
                 .putMetadata("order_id", order.getId().toString()) // Pour identifier l'order après le paiement
                 .build();
 
