@@ -39,6 +39,8 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/tracks", "/api/tracks/**").permitAll()
                 // Fichiers statiques uploadés : lecture publique
                 .requestMatchers(HttpMethod.GET, "/uploads/**").permitAll()
+                // Webhooks Stripe : accès public (appelé par Stripe, pas par le client)
+                .requestMatchers(HttpMethod.POST, "/api/payment/webhook").permitAll()
                 // Upload de fichiers : nécessite authentification (règle par défaut)
                 .anyRequest().authenticated()
             )
