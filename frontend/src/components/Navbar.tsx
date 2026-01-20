@@ -1,5 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom'; // Ajout useNavigate
-import { Music, User, LogOut, ShoppingCart } from 'lucide-react'; // Ajout LogOut
+import { Music, User, LogOut, ShoppingCart, FolderHeart } from 'lucide-react'; // Ajout LogOut et FolderHeart
 import { useAuth } from '../context/AuthContext'; // Import du hook
 import { useCart } from '../context/CartContext';
 
@@ -29,6 +29,21 @@ export default function Navbar() {
             </Link>
             
             <div className="h-6 w-px bg-slate-700 mx-2"></div>
+
+            {/* Lien Ma Bibliothèque (visible si connecté) */}
+            {isAuthenticated && (
+              <>
+                <Link
+                  to="/library"
+                  className="flex items-center gap-2 text-sm font-medium text-slate-300 hover:text-blue-400 transition-colors"
+                  title="Ma Bibliothèque"
+                >
+                  <FolderHeart className="h-5 w-5" />
+                  <span className="hidden sm:inline">Bibliothèque</span>
+                </Link>
+                <div className="h-6 w-px bg-slate-700 mx-2"></div>
+              </>
+            )}
 
             {/* Icône Panier avec badge */}
             <Link

@@ -5,6 +5,7 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ProducerDashboard from './pages/ProducerDashboard';
 import CartPage from './pages/CartPage';
+import LibraryPage from './pages/LibraryPage';
 import SuccessPage from './pages/checkout/SuccessPage';
 import CancelPage from './pages/checkout/CancelPage';
 import { AuthProvider } from './context/AuthContext'; // <--- Import
@@ -23,6 +24,7 @@ function App() {
             <Route path="register" element={<RegisterPage />} />
             <Route path="dashboard" element={<ProducerDashboard />} />
             <Route path="cart" element={<CartPage />} />
+            <Route path="library" element={<LibraryPage />} />
             <Route path="checkout/success" element={<SuccessPage />} />
             <Route path="checkout/cancel" element={<CancelPage />} />
             <Route
