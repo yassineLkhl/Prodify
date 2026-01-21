@@ -57,6 +57,12 @@ public class ProducerService {
                 .orElseThrow(() -> new RuntimeException("Profil producteur non trouvé"));
     }
 
+    // 7. Récupérer un producteur par son Slug (URL lisible)
+    public Producer getProducerBySlug(String slug) {
+        return producerRepository.findBySlug(slug)
+                .orElseThrow(() -> new RuntimeException("Producteur avec le slug '" + slug + "' non trouvé"));
+    }
+
     // --- Utilitaire pour transformer "DJ Yassine !" en "dj-yassine" ---
     private String generateSlug(String input) {
         String slug = toSlug(input);

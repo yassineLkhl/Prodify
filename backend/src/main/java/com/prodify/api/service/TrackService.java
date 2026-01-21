@@ -64,6 +64,11 @@ public class TrackService {
         return trackRepository.findByProducerId(producerId);
     }
 
+    // Récupérer les sons d'un producteur via son Slug (URL lisible)
+    public List<Track> getTracksByProducerSlug(String slug) {
+        return trackRepository.findByProducerSlug(slug);
+    }
+
     // --- SUPPRESSION ---
     public void deleteTrack(UUID id, User user) {
         // 1. Récupérer la track
@@ -81,6 +86,31 @@ public class TrackService {
 
         // 4. Supprimer la track
         trackRepository.delete(track);
+    }
+
+    // --- MISE À JOUR ---
+    public Track updateTrack(UUID id, TrackRequest request, User user) {
+        // 1. Récupérer la track
+        Track track = trackRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Track introuvable"));
+
+        // 2. SÉCURITÉ CRITIQUE : Vérifier que la track appartient au producteur connecté
+        // On compare l'ID de l'user de la track avec l'ID de l'user connecté
+        if (!track.getProducer().getUser().getId().equals(user.getId())) {
+            throw new RuntimeException("Vous n'êtes pas autorisé à modifier cette track.");
+        }
+
+        // 3. Mettre à jour les champs autorisés (NOT audioUrl et coverImageUrl)
+        track.setTitle(request.getTitle());
+        track.setDescription(request.getDescription());
+        track.setPrice(request.getPrice());
+        track.setBpm(request.getBpm());
+        track.setGenre(request.getGenre());
+        track.setMood(request.getMood());
+        // Les fichiers (audioUrl, coverImageUrl) ne sont PAS modifiés pour cette version
+
+        // 4. Sauvegarder et retourner
+        return trackRepository.save(track);
     }
 
     // --- UTILITAIRE SLUG (Même logique que ProducerService) ---
