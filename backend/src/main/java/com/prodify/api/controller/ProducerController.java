@@ -55,4 +55,11 @@ public class ProducerController {
         User user = (User) authentication.getPrincipal();
         return ResponseEntity.ok(producerService.getProducerByUser(user));
     }
+
+    // Récupérer un producteur via son Slug (URL lisible)
+    // URL : /api/producers/slug/mon-beatmaker-cool
+    @GetMapping("/slug/{slug}")
+    public ResponseEntity<Producer> getProducerBySlug(@PathVariable String slug) {
+        return ResponseEntity.ok(producerService.getProducerBySlug(slug));
+    }
 }

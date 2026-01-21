@@ -64,6 +64,11 @@ public class TrackService {
         return trackRepository.findByProducerId(producerId);
     }
 
+    // Récupérer les sons d'un producteur via son Slug (URL lisible)
+    public List<Track> getTracksByProducerSlug(String slug) {
+        return trackRepository.findByProducerSlug(slug);
+    }
+
     // --- SUPPRESSION ---
     public void deleteTrack(UUID id, User user) {
         // 1. Récupérer la track

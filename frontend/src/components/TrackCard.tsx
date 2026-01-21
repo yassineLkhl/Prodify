@@ -1,4 +1,5 @@
 import { Play, ShoppingCart, Check, Download } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { usePlayer } from '../context/PlayerContext';
 import { useCart } from '../context/CartContext';
 import type { Track } from '../types/track';
@@ -24,6 +25,11 @@ export default function TrackCard({ track, variant = 'default' }: TrackCardProps
     // Ouvre le fichier audio dans un nouvel onglet
     // Optionnellement, on peut forcer le téléchargement avec download attribute
     window.open(track.audioUrl, '_blank');
+  };
+
+  const handleProducerClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    // Navigation vers le profil du producteur (gérée par React Router Link)
   };
 
   return (
@@ -52,7 +58,19 @@ export default function TrackCard({ track, variant = 'default' }: TrackCardProps
           {track.bpm ? ` · ${track.bpm} BPM` : ''}
         </p>
         <h3 className="text-lg font-semibold text-white truncate">{track.title}</h3>
-        <p className="text-sm text-slate-400">Prod. {track.producer?.displayName || 'Unknown'}</p>
+        
+        {/* Nom producteur cliquable */}
+        {track.producer?.slug ? (
+          <Link
+            to={`/p/${track.producer.slug}`}
+            onClick={handleProducerClick}
+            className="text-sm text-slate-400 hover:text-blue-400 transition-colors inline-block"
+          >
+            Prod. {track.producer?.displayName || 'Unknown'}
+          </Link>
+        ) : (
+          <p className="text-sm text-slate-400">Prod. {track.producer?.displayName || 'Unknown'}</p>
+        )}
         
         {/* Affichage différent selon la variante */}
         <div className="mt-2 flex items-center justify-between">

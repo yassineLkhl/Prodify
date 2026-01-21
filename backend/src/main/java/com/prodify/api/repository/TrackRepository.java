@@ -15,6 +15,10 @@ public interface TrackRepository extends JpaRepository<Track, UUID> {
     
     boolean existsBySlug(String slug);
     
-    // Pour afficher le catalogue d'un beatmaker spécifique
+    // Pour afficher le catalogue d'un beatmaker spécifique (par ID)
     List<Track> findByProducerId(UUID producerId);
+
+    // Pour afficher le catalogue d'un beatmaker spécifique (par Slug - URL lisible)
+    // JPA va faire automatiquement le JOIN sur Producer.slug
+    List<Track> findByProducerSlug(String slug);
 }

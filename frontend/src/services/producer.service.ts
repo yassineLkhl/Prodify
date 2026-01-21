@@ -6,5 +6,9 @@ export const producerService = {
     const { data } = await api.get<Producer>('/producers/me');
     return data;
   },
-};
 
+  async getProducerBySlug(slug: string): Promise<Producer> {
+    const { data } = await api.get<Producer>(`/producers/slug/${slug}`);
+    return data;
+  },
+};

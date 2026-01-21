@@ -2,6 +2,7 @@ export interface Producer {
   id: string;
   displayName: string;
   slug?: string;
+  bio?: string | null;
   avatarUrl?: string | null;
 }
 

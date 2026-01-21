@@ -41,11 +41,18 @@ public class TrackController {
         return ResponseEntity.ok(trackService.getTrackById(id));
     }
 
-    // 4. Voir les Tracks d'un producteur spécifique (Public)
+    // 4. Voir les Tracks d'un producteur spécifique (Public) - par ID
     // URL : /api/tracks/producer/{producerId}
     @GetMapping("/producer/{producerId}")
     public ResponseEntity<List<Track>> getTracksByProducer(@PathVariable UUID producerId) {
         return ResponseEntity.ok(trackService.getTracksByProducer(producerId));
+    }
+
+    // 4b. Voir les Tracks d'un producteur spécifique (Public) - par Slug
+    // URL : /api/tracks/producer-slug/mon-beatmaker-cool
+    @GetMapping("/producer-slug/{slug}")
+    public ResponseEntity<List<Track>> getTracksByProducerSlug(@PathVariable String slug) {
+        return ResponseEntity.ok(trackService.getTracksByProducerSlug(slug));
     }
 
     // 5. Supprimer une Track (Sécurisé - uniquement le propriétaire)
