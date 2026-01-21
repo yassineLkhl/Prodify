@@ -13,8 +13,10 @@ export interface Track {
   price: number;
   coverImageUrl: string;
   audioUrl: string;
+  description?: string | null;
   genre?: string | null;
   bpm?: number | null;
+  mood?: string | null;
 }
 
 export interface TrackRequest {

@@ -88,6 +88,31 @@ public class TrackService {
         trackRepository.delete(track);
     }
 
+    // --- MISE À JOUR ---
+    public Track updateTrack(UUID id, TrackRequest request, User user) {
+        // 1. Récupérer la track
+        Track track = trackRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Track introuvable"));
+
+        // 2. SÉCURITÉ CRITIQUE : Vérifier que la track appartient au producteur connecté
+        // On compare l'ID de l'user de la track avec l'ID de l'user connecté
+        if (!track.getProducer().getUser().getId().equals(user.getId())) {
+            throw new RuntimeException("Vous n'êtes pas autorisé à modifier cette track.");
+        }
+
+        // 3. Mettre à jour les champs autorisés (NOT audioUrl et coverImageUrl)
+        track.setTitle(request.getTitle());
+        track.setDescription(request.getDescription());
+        track.setPrice(request.getPrice());
+        track.setBpm(request.getBpm());
+        track.setGenre(request.getGenre());
+        track.setMood(request.getMood());
+        // Les fichiers (audioUrl, coverImageUrl) ne sont PAS modifiés pour cette version
+
+        // 4. Sauvegarder et retourner
+        return trackRepository.save(track);
+    }
+
     // --- UTILITAIRE SLUG (Même logique que ProducerService) ---
     // Note : Idéalement, on mettrait ça dans une classe utilitaire commune "SlugUtils" plus tard
     private String generateSlug(String title) {

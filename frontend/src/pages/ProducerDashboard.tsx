@@ -9,6 +9,7 @@ import {
   Plus,
   X,
   Trash2,
+  Pencil,
 } from 'lucide-react';
 import { trackService } from '../services/track.service';
 import { useAuth } from '../context/AuthContext';
@@ -20,10 +21,11 @@ export default function ProducerDashboard() {
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
+  const [success, setSuccess] = useState<string>("");
   const [tracks, setTracks] = useState<Track[]>([]);
   const [loadingTracks, setLoadingTracks] = useState(false);
   const [deletingTrackId, setDeletingTrackId] = useState<string | null>(null);
+  const [editingTrackId, setEditingTrackId] = useState<string | null>(null);
 
   const [formData, setFormData] = useState<TrackRequest>({
     title: '',
@@ -89,7 +91,7 @@ export default function ProducerDashboard() {
           : value,
     });
     setError(null);
-    setSuccess(false);
+    setSuccess("");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -98,8 +100,16 @@ export default function ProducerDashboard() {
     setLoading(true);
 
     try {
-      await trackService.createTrack(formData);
-      setSuccess(true);
+      if (editingTrackId) { 
+        // Mise à jour d'une track existante
+        await trackService.updateTrack(editingTrackId, formData);
+        setSuccess("Instrumentale mise à jour avec succès !");
+      } else {
+        // Création d'une nouvelle track
+        await trackService.createTrack(formData);
+        setSuccess("Instrumentale créée avec succès !");
+      }
+
       // Reset form
       setFormData({
         title: '',
@@ -111,22 +121,62 @@ export default function ProducerDashboard() {
         coverImageUrl: '',
         audioUrl: '',
       });
+      setEditingTrackId(null);
+
       // Rafraîchir la liste des tracks
       await refreshTracks();
+
       // Hide form after 2 seconds
       setTimeout(() => {
         setShowForm(false);
-        setSuccess(false);
+        setSuccess("");
       }, 2000);
     } catch (err: unknown) {
-      setError(
-        err instanceof Error
-          ? err.message
-          : 'Erreur lors de la création de la track.'
-      );
+      const errorMessage =
+        err instanceof Error ? err.message : 'Erreur lors de l\'opération.';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleEditTrack = (track: Track) => {
+    // Remplir le formulaire avec les données de la track
+    setFormData({
+      title: track.title,
+      description: track.description || '',
+      price: track.price,
+      bpm: track.bpm || undefined,
+      genre: track.genre || '',
+      mood: track.mood || '',
+      coverImageUrl: track.coverImageUrl,
+      audioUrl: track.audioUrl,
+    });
+    setEditingTrackId(track.id);
+    setShowForm(true);
+
+    // Scroll vers le formulaire
+    setTimeout(() => {
+      document.querySelector('form')?.scrollIntoView({ behavior: 'smooth' });
+    }, 0);
+  };
+
+  const handleCancelEdit = () => {
+    // Réinitialiser le formulaire
+    setFormData({
+      title: '',
+      description: '',
+      price: 0,
+      bpm: undefined,
+      genre: '',
+      mood: '',
+      coverImageUrl: '',
+      audioUrl: '',
+    });
+    setEditingTrackId(null);
+    setShowForm(false);
+    setError(null);
+    setSuccess("");
   };
 
   const handleDeleteTrack = async (trackId: string) => {
@@ -246,15 +296,26 @@ export default function ProducerDashboard() {
                           </div>
                         </td>
                         <td className="px-6 py-4 text-right">
-                          <button
-                            type="button"
-                            onClick={() => handleDeleteTrack(track.id)}
-                            disabled={deletingTrackId === track.id}
-                            className="inline-flex items-center gap-2 px-3 py-2 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                          >
-                            <Trash2 size={18} />
-                            {deletingTrackId === track.id ? 'Suppression...' : 'Supprimer'}
-                          </button>
+                          <div className="flex items-center justify-end gap-2">
+                            <button
+                              type="button"
+                              onClick={() => handleEditTrack(track)}
+                              className="inline-flex items-center gap-2 px-3 py-2 text-blue-400 hover:text-blue-300 hover:bg-blue-500/10 rounded-lg transition-colors"
+                              title="Modifier cette track"
+                            >
+                              <Pencil size={18} />
+                              <span className="hidden sm:inline">Modifier</span>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteTrack(track.id)}
+                              disabled={deletingTrackId === track.id}
+                              className="inline-flex items-center gap-2 px-3 py-2 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              <Trash2 size={18} />
+                              {deletingTrackId === track.id ? 'Suppression...' : 'Supprimer'}
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))}
@@ -268,15 +329,11 @@ export default function ProducerDashboard() {
         <div className="max-w-2xl bg-slate-900 border border-slate-800 rounded-xl p-8 shadow-2xl">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-white">
-              Nouvelle Instrumentale
+              {editingTrackId ? 'Modifier l\'Instrumentale' : 'Nouvelle Instrumentale'}
             </h2>
             <button
               type="button"
-              onClick={() => {
-                setShowForm(false);
-                setError(null);
-                setSuccess(false);
-              }}
+              onClick={() => handleCancelEdit()}
               className="text-slate-400 hover:text-white transition-colors"
             >
               <X size={24} />
@@ -291,7 +348,7 @@ export default function ProducerDashboard() {
 
           {success && (
             <div className="bg-emerald-500/10 border border-emerald-500/50 text-emerald-500 p-3 rounded-lg mb-6 text-sm">
-              Track créée avec succès ! 🎉
+              {success}
             </div>
           )}
 
@@ -426,15 +483,17 @@ export default function ProducerDashboard() {
                 disabled={loading}
                 className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {loading ? 'Création en cours...' : 'Créer la Track'}
+                {loading
+                  ? editingTrackId
+                    ? 'Mise à jour en cours...'
+                    : 'Création en cours...'
+                  : editingTrackId
+                  ? 'Mettre à jour la Track'
+                  : 'Créer la Track'}
               </button>
               <button
                 type="button"
-                onClick={() => {
-                  setShowForm(false);
-                  setError(null);
-                  setSuccess(false);
-                }}
+                onClick={() => handleCancelEdit()}
                 className="px-6 bg-slate-800 hover:bg-slate-700 text-white font-semibold py-3 rounded-lg transition-colors"
               >
                 Annuler

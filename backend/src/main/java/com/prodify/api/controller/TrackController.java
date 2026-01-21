@@ -55,7 +55,18 @@ public class TrackController {
         return ResponseEntity.ok(trackService.getTracksByProducerSlug(slug));
     }
 
-    // 5. Supprimer une Track (Sécurisé - uniquement le propriétaire)
+    // 5. Modifier une Track (Sécurisé - uniquement le propriétaire)
+    @PutMapping("/{id}")
+    public ResponseEntity<Track> updateTrack(
+            @PathVariable UUID id,
+            @RequestBody TrackRequest request,
+            Authentication authentication
+    ) {
+        User user = (User) authentication.getPrincipal();
+        return ResponseEntity.ok(trackService.updateTrack(id, request, user));
+    }
+
+    // 6. Supprimer une Track (Sécurisé - uniquement le propriétaire)
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTrack(
             @PathVariable UUID id,
