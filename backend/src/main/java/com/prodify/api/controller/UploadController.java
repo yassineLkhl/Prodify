@@ -1,8 +1,9 @@
 package com.prodify.api.controller;
 
 import com.prodify.api.dto.upload.UploadResponse;
-import com.prodify.service.S3StorageService;
+import com.prodify.service.FileStorageService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,13 +19,17 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class UploadController {
 
-    private final S3StorageService s3StorageService;
+    private final FileStorageService fileStorageService;
+
+    @Value("${server.port:8080}")
+    private int serverPort;
 
     @PostMapping
     public ResponseEntity<UploadResponse> uploadFile(@RequestParam("file") MultipartFile file) {
         try {
-            String fileUrl = s3StorageService.saveFile(file);
-            return ResponseEntity.ok(new UploadResponse(fileUrl));
+            String storedFileName = fileStorageService.saveFile(file);
+            String url = String.format("http://localhost:%d/uploads/%s", serverPort, storedFileName);
+            return ResponseEntity.ok(new UploadResponse(url));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
         } catch (IOException e) {
