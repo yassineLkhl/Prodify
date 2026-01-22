@@ -63,3 +63,37 @@ Ce projet a été conçu avec une architecture robuste et scalable, en suivant l
 Lancer la base de données :
 ```bash
 docker compose up -d
+```
+
+### 2. Backend (Spring boot)
+Il est nécessaire de configurer un fichier src/main/resources/secrets.properties avec les clés API (AWS, Stripe, Mailtrap).
+```bash
+cd backend
+./mvnw clean spring-boot:run
+```
+API : http://localhost:8081/api
+
+### 3. Frontend (React)
+```bash
+cd frontend
+npm install
+npm run dev
+```
+## Roadmap & Améliorations
+
+*   [x] **Core Features** (Auth, Catalogue, Dashboard)
+*   [x] **Paiement & Commandes** (Stripe, Webhooks)
+*   [x] **Infrastructure Cloud** (S3 Storage)
+*   [x] **Marketing** (Emails, Profils Publics, SEO URLs)
+*   [ ] **Déploiement** : Mise en production (AWS / Vercel).
+*   [ ] **Analytics** : Dashboard des ventes pour les producteurs.
+
+---
+
+## Méthodologie
+
+Ce projet a été réalisé en adoptant une approche **"AI-Augmented Development"**.
+L'utilisation d'outils comme **Cursor/Claude** a permis d'accélérer l'écriture du code (Boilerplate, DTOs, UI Components) pour se concentrer sur l'architecture logicielle, la sécurité et la logique métier complexe.
+
+**Auteur :** Yassine LAKHAL
+
