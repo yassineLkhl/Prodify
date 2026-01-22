@@ -15,6 +15,8 @@ export interface Track {
   audioUrl: string;
   genre?: string | null;
   bpm?: number | null;
+  description?: string | null;
+  mood?: string | null;
 }
 
 export interface TrackRequest {
@@ -26,5 +28,15 @@ export interface TrackRequest {
   mood?: string;
   coverImageUrl: string;
   audioUrl: string;
+}
+
+export interface TrackSearchCriteria {
+  title?: string;
+  genre?: string;
+  mood?: string;
+  minBpm?: number;
+  maxBpm?: number;
+  minPrice?: number;
+  maxPrice?: number;
 }
 
