@@ -73,11 +73,11 @@ public class OrderService {
     }
 
     @Transactional
-    public Order validateOrder(UUID orderId) {
+    public void validateOrder(UUID orderId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Commande introuvable avec l'ID: " + orderId));
         order.setStatus(OrderStatus.COMPLETED);
-        return orderRepository.save(order);
+        orderRepository.save(order);
     }
 
     private OrderResponse convertToOrderResponse(Order order) {
