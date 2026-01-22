@@ -30,3 +30,13 @@ export interface TrackRequest {
   audioUrl: string;
 }
 
+export interface TrackSearchCriteria {
+  title?: string;
+  genre?: string;
+  mood?: string;
+  minBpm?: number;
+  maxBpm?: number;
+  minPrice?: number;
+  maxPrice?: number;
+}
+

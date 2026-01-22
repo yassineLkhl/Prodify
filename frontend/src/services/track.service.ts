@@ -1,5 +1,5 @@
 import api from './api';
-import type { Track, TrackRequest } from '../types/track';
+import type { Track, TrackRequest, TrackSearchCriteria } from '../types/track';
 
 export const trackService = {
   async getTracks(): Promise<Track[]> {
@@ -18,11 +18,15 @@ export const trackService = {
     const { data } = await api.get<Track[]>(`/tracks/producer-slug/${slug}`);
     return data;
   },
-  async updateTrack(id: string, data: TrackRequest): Promise<Track> {
-    const { data: track } = await api.put<Track>(`/tracks/${id}`, data);
-    return track;
+  async searchTracks(criteria: TrackSearchCriteria): Promise<Track[]> {
+    const { data } = await api.post<Track[]>('/tracks/search', criteria);
+    return data;
   },
   async deleteTrack(id: string): Promise<void> {
     await api.delete(`/tracks/${id}`);
+  },
+  async updateTrack(id: string, data: TrackRequest): Promise<Track> {
+    const { data: track } = await api.put<Track>(`/tracks/${id}`, data);
+    return track;
   },
 };
