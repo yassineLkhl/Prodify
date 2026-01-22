@@ -42,14 +42,14 @@ public class AuthenticationService {
                 .build();
 
         userRepository.save(user);
-        
+
         // Envoyer un email de bienvenue (asynchrone)
         emailService.sendWelcomeEmail(user.getEmail(), user.getFirstName());
-        
+
         // On génère le token dès l'inscription pour que l'user soit connecté direct
-        var jwtToken = jwtService.generateToken(user);
-        var userDTO = convertToUserDTO(user);
-        
+        String jwtToken = jwtService.generateToken(user);
+        UserDTO userDTO = convertToUserDTO(user);
+
         return AuthenticationResponse.builder()
                 .token(jwtToken)
                 .user(userDTO)

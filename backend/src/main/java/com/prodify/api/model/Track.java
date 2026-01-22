@@ -62,6 +62,7 @@ public class Track {
     private BigDecimal price; // Utiliser BigDecimal pour l'argent !
 
     // --- STATUT ---
+    @Builder.Default
     private boolean isSold = false; // Si vendu en exclusivité
 
     @Column(nullable = false)

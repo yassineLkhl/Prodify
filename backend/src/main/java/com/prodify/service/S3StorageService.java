@@ -59,7 +59,7 @@ public class S3StorageService {
                 .build();
 
         // Uploader le fichier vers S3
-        PutObjectResponse response = s3Client.putObject(
+        s3Client.putObject(
                 putObjectRequest,
                 RequestBody.fromInputStream(file.getInputStream(), file.getSize())
         );
