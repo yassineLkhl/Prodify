@@ -23,9 +23,8 @@ public class AuthenticationService {
     private final UserRepository userRepository;
     private final ProducerRepository producerRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtService jwtService;
-    private final AuthenticationManager authenticationManager;
-    private final EmailService emailService;
+    private final JwtService jwtService; // On injecte notre nouveau service
+    private final AuthenticationManager authenticationManager; // Pour vérifier le login
 
     // Méthode Inscription (existante, on change juste le type de retour pour renvoyer le token direct !)
     public AuthenticationResponse register(RegisterRequest request) {
@@ -42,9 +41,6 @@ public class AuthenticationService {
                 .build();
 
         userRepository.save(user);
-        
-        // Envoyer un email de bienvenue (asynchrone)
-        emailService.sendWelcomeEmail(user.getEmail(), user.getFirstName());
         
         // On génère le token dès l'inscription pour que l'user soit connecté direct
         var jwtToken = jwtService.generateToken(user);
