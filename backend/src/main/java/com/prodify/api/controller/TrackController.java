@@ -1,6 +1,7 @@
 package com.prodify.api.controller;
 
 import com.prodify.api.dto.track.TrackRequest;
+import com.prodify.api.dto.track.TrackSearchCriteria;
 import com.prodify.api.model.Track;
 import com.prodify.api.model.User;
 import com.prodify.api.service.TrackService;
@@ -33,6 +34,13 @@ public class TrackController {
     @GetMapping
     public ResponseEntity<List<Track>> getAllTracks() {
         return ResponseEntity.ok(trackService.getAllTracks());
+    }
+
+    // 2b. Rechercher les Tracks avec des critères (Public)
+    // POST pour pouvoir envoyer un objet JSON complexe dans le body
+    @PostMapping("/search")
+    public ResponseEntity<List<Track>> searchTracks(@RequestBody TrackSearchCriteria criteria) {
+        return ResponseEntity.ok(trackService.searchTracks(criteria));
     }
 
     // 3. Voir une Track spécifique (Public)
