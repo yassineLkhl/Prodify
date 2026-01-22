@@ -1,5 +1,7 @@
 package com.prodify.api.controller;
 
+import com.prodify.api.model.Order;
+import com.prodify.api.service.EmailService;
 import com.prodify.api.service.OrderService;
 import com.stripe.exception.EventDataObjectDeserializationException;
 import com.stripe.exception.SignatureVerificationException;
@@ -25,6 +27,7 @@ import java.util.UUID;
 public class PaymentWebhookController {
 
     private final OrderService orderService;
+    private final EmailService emailService;
 
     @Value("${stripe.webhook.secret}")
     private String webhookSecret;
@@ -123,7 +126,16 @@ public class PaymentWebhookController {
 
         // 5. Valider la commande (passer le statut à COMPLETED)
         log.info("Validation de la commande : {}", orderId);
-        orderService.validateOrder(orderId);
-        log.info("Commande validée avec succès : {}", orderId);
+        Order order = orderService.validateOrder(orderId);
+        
+        // 6. Envoyer un email de confirmation au client
+        log.info("Envoi de l'email de confirmation pour la commande : {}", orderId);
+        emailService.sendOrderConfirmation(
+                order.getUser().getEmail(),
+                order.getTotalAmount(),
+                orderId
+        );
+        
+        log.info("Commande validée et email envoyé : {}", orderId);
     }
 }
