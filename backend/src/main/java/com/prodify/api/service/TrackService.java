@@ -1,13 +1,11 @@
 package com.prodify.api.service;
 
 import com.prodify.api.dto.track.TrackRequest;
-import com.prodify.api.dto.track.TrackSearchCriteria;
 import com.prodify.api.model.Producer;
 import com.prodify.api.model.Track;
 import com.prodify.api.model.User;
 import com.prodify.api.repository.ProducerRepository;
 import com.prodify.api.repository.TrackRepository;
-import com.prodify.api.specification.TrackSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -69,11 +67,6 @@ public class TrackService {
     // Récupérer les sons d'un producteur via son Slug (URL lisible)
     public List<Track> getTracksByProducerSlug(String slug) {
         return trackRepository.findByProducerSlug(slug);
-    }
-
-    // Rechercher les tracks avec des critères multicritères
-    public List<Track> searchTracks(TrackSearchCriteria criteria) {
-        return trackRepository.findAll(TrackSpecification.getSpecifications(criteria));
     }
 
     // --- SUPPRESSION ---
