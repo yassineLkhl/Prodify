@@ -135,7 +135,15 @@ public class TrackService {
 
     private String toSlug(String input) {
         if (input == null) return "";
-        String nonLatin = Pattern.compile("[^\\w-]").matcher(Normalizer.normalize(input, Normalizer.Form.NFD)).replaceAll("");
-        return nonLatin.toLowerCase(Locale.ENGLISH).replace(" ", "-");
+        // 1. Normaliser (NFD)
+        String normalized = Normalizer.normalize(input, Normalizer.Form.NFD);
+        // 2. Remplacer les espaces par des tirets
+        String withDashes = normalized.replace(" ", "-");
+        // 3. Supprimer tout ce qui n'est pas alphanumérique ou tiret
+        String cleaned = Pattern.compile("[^a-zA-Z0-9-]").matcher(withDashes).replaceAll("");
+        // 4. Passer en minuscule
+        String lowercase = cleaned.toLowerCase(Locale.ENGLISH);
+        // 5. Gérer les tirets multiples (remplacer "---" ou "--" par "-")
+        return lowercase.replaceAll("-+", "-");
     }
 }
