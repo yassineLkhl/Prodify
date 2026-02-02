@@ -9,14 +9,13 @@ import com.prodify.api.model.Track;
 import com.prodify.api.model.User;
 import com.prodify.api.repository.OrderRepository;
 import com.prodify.api.repository.TrackRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -33,39 +32,52 @@ public class OrderService {
         }
 
         // 2. Récupérer les tracks depuis la BDD
-        List<Track> tracks = trackIds.stream()
-                .map(trackId -> trackRepository.findById(trackId)
-                        .orElseThrow(() -> new RuntimeException("Track introuvable avec l'ID: " + trackId)))
-                .collect(Collectors.toList());
+        List<Track> tracks =
+                trackIds.stream()
+                        .map(
+                                trackId ->
+                                        trackRepository
+                                                .findById(trackId)
+                                                .orElseThrow(
+                                                        () ->
+                                                                new RuntimeException(
+                                                                        "Track introuvable avec l'ID: "
+                                                                                + trackId)))
+                        .collect(Collectors.toList());
 
         // 3. Vérifier qu'aucune track n'est déjà vendue (si nécessaire)
         // Pour l'instant, on permet l'achat même si isSold = true (on peut changer ça plus tard)
 
         // 4. Calculer le total
-        BigDecimal totalAmount = tracks.stream()
-                .map(Track::getPrice)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal totalAmount =
+                tracks.stream().map(Track::getPrice).reduce(BigDecimal.ZERO, BigDecimal::add);
 
         // 5. Créer l'Order
-        Order order = Order.builder()
-                .user(user)
-                .totalAmount(totalAmount)
-                .status(OrderStatus.PENDING)
-                .build();
+        Order order =
+                Order.builder()
+                        .user(user)
+                        .totalAmount(totalAmount)
+                        .status(OrderStatus.PENDING)
+                        .build();
 
         // 6. Créer les OrderItems avec snapshot du prix
-        List<OrderItem> orderItems = tracks.stream()
-                .map(track -> OrderItem.builder()
-                        .order(order)
-                        .track(track)
-                        .price(track.getPrice()) // Snapshot du prix au moment de l'achat
-                        .build())
-                .collect(Collectors.toList());
+        List<OrderItem> orderItems =
+                tracks.stream()
+                        .map(
+                                track ->
+                                        OrderItem.builder()
+                                                .order(order)
+                                                .track(track)
+                                                .price(track.getPrice()) // Snapshot du prix au
+                                                // moment de l'achat
+                                                .build())
+                        .collect(Collectors.toList());
 
         // 7. Associer les items à l'order
         order.setItems(orderItems);
 
-        // 8. Sauvegarder l'order (les items seront sauvegardés automatiquement grâce à CascadeType.ALL)
+        // 8. Sauvegarder l'order (les items seront sauvegardés automatiquement grâce à
+        // CascadeType.ALL)
         Order savedOrder = orderRepository.save(order);
 
         // 9. Convertir en OrderResponse
@@ -74,20 +86,28 @@ public class OrderService {
 
     @Transactional
     public Order validateOrder(UUID orderId) {
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new RuntimeException("Commande introuvable avec l'ID: " + orderId));
+        Order order =
+                orderRepository
+                        .findById(orderId)
+                        .orElseThrow(
+                                () ->
+                                        new RuntimeException(
+                                                "Commande introuvable avec l'ID: " + orderId));
         order.setStatus(OrderStatus.COMPLETED);
         return orderRepository.save(order);
     }
 
     private OrderResponse convertToOrderResponse(Order order) {
-        List<OrderItemResponse> items = order.getItems().stream()
-                .map(item -> OrderItemResponse.builder()
-                        .trackId(item.getTrack().getId())
-                        .trackTitle(item.getTrack().getTitle())
-                        .price(item.getPrice())
-                        .build())
-                .collect(Collectors.toList());
+        List<OrderItemResponse> items =
+                order.getItems().stream()
+                        .map(
+                                item ->
+                                        OrderItemResponse.builder()
+                                                .trackId(item.getTrack().getId())
+                                                .trackTitle(item.getTrack().getTitle())
+                                                .price(item.getPrice())
+                                                .build())
+                        .collect(Collectors.toList());
 
         return OrderResponse.builder()
                 .id(order.getId())
@@ -98,4 +118,3 @@ public class OrderService {
                 .build();
     }
 }
-

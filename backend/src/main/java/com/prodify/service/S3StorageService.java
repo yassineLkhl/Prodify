@@ -1,15 +1,14 @@
 package com.prodify.service;
 
+import java.io.IOException;
+import java.util.Objects;
+import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-
-import java.io.IOException;
-import java.util.Objects;
-import java.util.UUID;
 
 @Service
 public class S3StorageService {
@@ -50,26 +49,23 @@ public class S3StorageService {
         String uniqueFileName = UUID.randomUUID() + extension;
 
         // Préparer la requête PutObject pour S3
-        PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-                .bucket(bucketName)
-                .key(uniqueFileName)
-                .contentType(file.getContentType())
-                .contentLength(file.getSize())
-                .build();
+        PutObjectRequest putObjectRequest =
+                PutObjectRequest.builder()
+                        .bucket(bucketName)
+                        .key(uniqueFileName)
+                        .contentType(file.getContentType())
+                        .contentLength(file.getSize())
+                        .build();
 
         // Uploader le fichier vers S3
         s3Client.putObject(
                 putObjectRequest,
-                RequestBody.fromInputStream(file.getInputStream(), file.getSize())
-        );
+                RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
 
         // Construire et retourner l'URL publique
-        String publicUrl = String.format(
-                "https://%s.s3.%s.amazonaws.com/%s",
-                bucketName,
-                awsRegion,
-                uniqueFileName
-        );
+        String publicUrl =
+                String.format(
+                        "https://%s.s3.%s.amazonaws.com/%s", bucketName, awsRegion, uniqueFileName);
 
         return publicUrl;
     }

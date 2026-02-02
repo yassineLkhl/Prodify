@@ -21,7 +21,7 @@ export default function ProducerDashboard() {
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string>("");
+  const [success, setSuccess] = useState<string>('');
   const [tracks, setTracks] = useState<Track[]>([]);
   const [loadingTracks, setLoadingTracks] = useState(false);
   const [deletingTrackId, setDeletingTrackId] = useState<string | null>(null);
@@ -53,11 +53,7 @@ export default function ProducerDashboard() {
         const producerTracks = await trackService.getTracksByProducer(user.producerId);
         setTracks(producerTracks);
       } catch (err: unknown) {
-        setError(
-          err instanceof Error
-            ? err.message
-            : 'Erreur lors du chargement des données.'
-        );
+        setError(err instanceof Error ? err.message : 'Erreur lors du chargement des données.');
       } finally {
         setLoadingTracks(false);
       }
@@ -77,21 +73,15 @@ export default function ProducerDashboard() {
     }
   };
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
       [name]:
-        name === 'price' || name === 'bpm'
-          ? value === ''
-            ? undefined
-            : Number(value)
-          : value,
+        name === 'price' || name === 'bpm' ? (value === '' ? undefined : Number(value)) : value,
     });
     setError(null);
-    setSuccess("");
+    setSuccess('');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -100,14 +90,14 @@ export default function ProducerDashboard() {
     setLoading(true);
 
     try {
-      if (editingTrackId) { 
+      if (editingTrackId) {
         // Mise à jour d'une track existante
         await trackService.updateTrack(editingTrackId, formData);
-        setSuccess("Instrumentale mise à jour avec succès !");
+        setSuccess('Instrumentale mise à jour avec succès !');
       } else {
         // Création d'une nouvelle track
         await trackService.createTrack(formData);
-        setSuccess("Instrumentale créée avec succès !");
+        setSuccess('Instrumentale créée avec succès !');
       }
 
       // Reset form
@@ -129,11 +119,10 @@ export default function ProducerDashboard() {
       // Hide form after 2 seconds
       setTimeout(() => {
         setShowForm(false);
-        setSuccess("");
+        setSuccess('');
       }, 2000);
     } catch (err: unknown) {
-      const errorMessage =
-        err instanceof Error ? err.message : 'Erreur lors de l\'opération.';
+      const errorMessage = err instanceof Error ? err.message : "Erreur lors de l'opération.";
       setError(errorMessage);
     } finally {
       setLoading(false);
@@ -176,7 +165,7 @@ export default function ProducerDashboard() {
     setEditingTrackId(null);
     setShowForm(false);
     setError(null);
-    setSuccess("");
+    setSuccess('');
   };
 
   const handleDeleteTrack = async (trackId: string) => {
@@ -190,11 +179,7 @@ export default function ProducerDashboard() {
       // Rafraîchir la liste des tracks
       await refreshTracks();
     } catch (err: unknown) {
-      setError(
-        err instanceof Error
-          ? err.message
-          : 'Erreur lors de la suppression de la track.'
-      );
+      setError(err instanceof Error ? err.message : 'Erreur lors de la suppression de la track.');
     } finally {
       setDeletingTrackId(null);
     }
@@ -237,9 +222,7 @@ export default function ProducerDashboard() {
             </div>
 
             {loadingTracks ? (
-              <div className="p-8 text-center text-slate-400">
-                Chargement...
-              </div>
+              <div className="p-8 text-center text-slate-400">Chargement...</div>
             ) : tracks.length === 0 ? (
               <div className="p-8 text-center text-slate-400">
                 Aucune track pour le moment. Créez votre première track !
@@ -265,10 +248,7 @@ export default function ProducerDashboard() {
                   </thead>
                   <tbody className="divide-y divide-slate-800">
                     {tracks.map((track) => (
-                      <tr
-                        key={track.id}
-                        className="hover:bg-slate-800/30 transition-colors"
-                      >
+                      <tr key={track.id} className="hover:bg-slate-800/30 transition-colors">
                         <td className="px-6 py-4">
                           {track.coverImageUrl ? (
                             <img
@@ -285,9 +265,7 @@ export default function ProducerDashboard() {
                         <td className="px-6 py-4">
                           <div className="font-medium">{track.title}</div>
                           {track.genre && (
-                            <div className="text-sm text-slate-400">
-                              {track.genre}
-                            </div>
+                            <div className="text-sm text-slate-400">{track.genre}</div>
                           )}
                         </td>
                         <td className="px-6 py-4">
@@ -329,7 +307,7 @@ export default function ProducerDashboard() {
         <div className="max-w-2xl bg-slate-900 border border-slate-800 rounded-xl p-8 shadow-2xl">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-white">
-              {editingTrackId ? 'Modifier l\'Instrumentale' : 'Nouvelle Instrumentale'}
+              {editingTrackId ? "Modifier l'Instrumentale" : 'Nouvelle Instrumentale'}
             </h2>
             <button
               type="button"
@@ -372,9 +350,7 @@ export default function ProducerDashboard() {
             </div>
 
             <div className="space-y-1">
-              <label className="text-sm font-medium text-slate-300">
-                Description
-              </label>
+              <label className="text-sm font-medium text-slate-300">Description</label>
               <div className="relative">
                 <FileText className="absolute left-3 top-3 h-5 w-5 text-slate-500" />
                 <textarea
@@ -488,8 +464,8 @@ export default function ProducerDashboard() {
                     ? 'Mise à jour en cours...'
                     : 'Création en cours...'
                   : editingTrackId
-                  ? 'Mettre à jour la Track'
-                  : 'Créer la Track'}
+                    ? 'Mettre à jour la Track'
+                    : 'Créer la Track'}
               </button>
               <button
                 type="button"

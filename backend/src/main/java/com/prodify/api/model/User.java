@@ -1,16 +1,16 @@
 package com.prodify.api.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import java.time.OffsetDateTime;
+import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
 import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.time.OffsetDateTime;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
 
 @Entity
 @Table(name = "users") // "user" est réservé en SQL, donc "users" obligatoire
@@ -19,11 +19,10 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class User implements UserDetails { // Implémenter UserDetails facilite l'intégration Spring Security
+public class User
+        implements UserDetails { // Implémenter UserDetails facilite l'intégration Spring Security
 
-    @Id
-    @UuidGenerator
-    private UUID id;
+    @Id @UuidGenerator private UUID id;
 
     @Column(nullable = false)
     private String firstName;
@@ -37,7 +36,7 @@ public class User implements UserDetails { // Implémenter UserDetails facilite 
     @Column(nullable = false, unique = true)
     private String email;
 
-    @JsonIgnore 
+    @JsonIgnore
     @Column(nullable = false)
     private String password;
 
@@ -67,7 +66,7 @@ public class User implements UserDetails { // Implémenter UserDetails facilite 
 
     // --- IMPLEMENTATION USER DETAILS (Spring Security) ---
     // Ces méthodes permettent à Spring Security de comprendre ton User
-    
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));

@@ -1,14 +1,13 @@
 package com.prodify.api.model;
 
 import jakarta.persistence.*;
-import lombok.*;
-import org.hibernate.annotations.UuidGenerator;
-
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import lombok.*;
+import org.hibernate.annotations.UuidGenerator;
 
 @Entity
 @Table(name = "orders")
@@ -19,9 +18,7 @@ import java.util.UUID;
 @Builder
 public class Order {
 
-    @Id
-    @UuidGenerator
-    private UUID id;
+    @Id @UuidGenerator private UUID id;
 
     // Relation vers User (ManyToOne)
     @ManyToOne(fetch = FetchType.EAGER)
@@ -39,7 +36,11 @@ public class Order {
     private OrderStatus status = OrderStatus.PENDING;
 
     // Liste des items de la commande (OneToMany avec cascade)
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(
+            mappedBy = "order",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY)
     @Builder.Default
     private List<OrderItem> items = new ArrayList<>();
 
@@ -63,4 +64,3 @@ public class Order {
         this.updatedAt = OffsetDateTime.now();
     }
 }
-

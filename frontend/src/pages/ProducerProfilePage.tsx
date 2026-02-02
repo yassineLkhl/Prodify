@@ -61,23 +61,16 @@ export default function ProducerProfilePage() {
     return (
       <div className="min-h-screen bg-slate-950 py-12 px-4">
         <div className="max-w-4xl mx-auto">
-          <Link
-            to="/"
-            className="flex items-center gap-2 text-blue-400 hover:text-blue-300 mb-6"
-          >
+          <Link to="/" className="flex items-center gap-2 text-blue-400 hover:text-blue-300 mb-6">
             <ArrowLeft size={20} />
             Retour au catalogue
           </Link>
-          
+
           <div className="flex items-center justify-center h-96">
             <div className="text-center p-8 rounded-lg bg-red-950/50 border border-red-800 max-w-md">
               <AlertCircle className="h-16 w-16 text-red-500 mx-auto mb-3" />
-              <p className="text-red-400 font-medium text-lg">
-                {error || 'Producteur non trouvé'}
-              </p>
-              <p className="text-red-300 text-sm mt-2">
-                Vérifiez l'URL et réessayez.
-              </p>
+              <p className="text-red-400 font-medium text-lg">{error || 'Producteur non trouvé'}</p>
+              <p className="text-red-300 text-sm mt-2">Vérifiez l'URL et réessayez.</p>
             </div>
           </div>
         </div>
@@ -109,14 +102,8 @@ export default function ProducerProfilePage() {
               <h1 className="text-4xl sm:text-5xl font-bold text-white mb-2">
                 {producer.displayName}
               </h1>
-              {producer.slug && (
-                <p className="text-slate-400 text-sm mb-3">@{producer.slug}</p>
-              )}
-              {producer.bio && (
-                <p className="text-slate-300 text-base max-w-2xl">
-                  {producer.bio}
-                </p>
-              )}
+              {producer.slug && <p className="text-slate-400 text-sm mb-3">@{producer.slug}</p>}
+              {producer.bio && <p className="text-slate-300 text-base max-w-2xl">{producer.bio}</p>}
             </div>
 
             {/* Bouton Retour */}
@@ -146,9 +133,7 @@ export default function ProducerProfilePage() {
           </div>
         ) : (
           <>
-            <h2 className="text-2xl font-bold text-white mb-6">
-              Instrumentales ({tracks.length})
-            </h2>
+            <h2 className="text-2xl font-bold text-white mb-6">Instrumentales ({tracks.length})</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {tracks.map((track) => (
                 <TrackCard key={track.id} track={track} variant="default" />

@@ -1,11 +1,10 @@
 package com.prodify.api.model;
 
 import jakarta.persistence.*;
-import lombok.*;
-import org.hibernate.annotations.UuidGenerator;
-
 import java.time.OffsetDateTime;
 import java.util.UUID;
+import lombok.*;
+import org.hibernate.annotations.UuidGenerator;
 
 @Entity
 @Table(name = "producers")
@@ -16,9 +15,7 @@ import java.util.UUID;
 @Builder
 public class Producer {
 
-    @Id
-    @UuidGenerator
-    private UUID id;
+    @Id @UuidGenerator private UUID id;
 
     // LE LIEN IMPORTANT : Un User possède un profil Producer
     @OneToOne(fetch = FetchType.EAGER)

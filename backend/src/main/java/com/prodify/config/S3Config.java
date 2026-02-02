@@ -20,13 +20,11 @@ public class S3Config {
     @Value("${aws.s3.region}")
     private String awsRegion;
 
-    /**
-     * Crée et configure un client S3 avec les credentials statiques
-     */
+    /** Crée et configure un client S3 avec les credentials statiques */
     @Bean
     public S3Client s3Client() {
         AwsBasicCredentials credentials = AwsBasicCredentials.create(awsAccessKey, awsSecretKey);
-        
+
         return S3Client.builder()
                 .region(Region.of(awsRegion))
                 .credentialsProvider(StaticCredentialsProvider.create(credentials))

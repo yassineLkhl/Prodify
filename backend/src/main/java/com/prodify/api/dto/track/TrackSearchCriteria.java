@@ -1,13 +1,9 @@
 package com.prodify.api.dto.track;
 
+import java.math.BigDecimal;
 import lombok.*;
 
-import java.math.BigDecimal;
-
-/**
- * DTO pour les critères de recherche et filtrage des tracks.
- * Tous les champs sont optionnels.
- */
+/** DTO pour les critères de recherche et filtrage des tracks. Tous les champs sont optionnels. */
 @Getter
 @Setter
 @NoArgsConstructor

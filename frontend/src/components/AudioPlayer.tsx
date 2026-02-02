@@ -11,16 +11,8 @@ function formatTime(seconds: number) {
 }
 
 export default function AudioPlayer() {
-  const {
-    currentTrack,
-    isPlaying,
-    currentTime,
-    duration,
-    progress,
-    togglePlay,
-    seek,
-    setVolume,
-  } = usePlayer();
+  const { currentTrack, isPlaying, currentTime, duration, progress, togglePlay, seek, setVolume } =
+    usePlayer();
 
   if (!currentTrack) return null;
 
@@ -99,4 +91,3 @@ export default function AudioPlayer() {
     </div>
   );
 }
-

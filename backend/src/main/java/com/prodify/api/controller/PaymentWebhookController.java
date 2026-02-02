@@ -8,6 +8,7 @@ import com.stripe.exception.SignatureVerificationException;
 import com.stripe.model.Event;
 import com.stripe.model.checkout.Session;
 import com.stripe.net.Webhook;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,8 +18,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.UUID;
 
 @Slf4j
 @RestController
@@ -33,8 +32,8 @@ public class PaymentWebhookController {
     private String webhookSecret;
 
     /**
-     * Endpoint pour recevoir les webhooks de Stripe.
-     * Stripe appelle cet endpoint quand un événement important se produit (ex: paiement complété).
+     * Endpoint pour recevoir les webhooks de Stripe. Stripe appelle cet endpoint quand un événement
+     * important se produit (ex: paiement complété).
      *
      * @param payload Le body de la requête (JSON de l'événement)
      * @param signature Le header Stripe-Signature pour vérifier l'authententicité
@@ -42,8 +41,7 @@ public class PaymentWebhookController {
      */
     @PostMapping("/webhook")
     public ResponseEntity<String> handleStripeWebhook(
-            @RequestBody String payload,
-            @RequestHeader("Stripe-Signature") String signature) {
+            @RequestBody String payload, @RequestHeader("Stripe-Signature") String signature) {
 
         try {
             // 1. Vérifier que la requête vient bien de Stripe
@@ -83,26 +81,33 @@ public class PaymentWebhookController {
     }
 
     /**
-     * Traite l'événement "checkout.session.completed" de Stripe.
-     * Cet événement est déclenché quand un client a complété le paiement avec succès.
+     * Traite l'événement "checkout.session.completed" de Stripe. Cet événement est déclenché quand
+     * un client a complété le paiement avec succès.
      */
     private void handleCheckoutSessionCompleted(Event event) {
         // 1. Extraire la Session depuis l'événement avec fallback pour les mismatch de version
         var dataObjectDeserializer = event.getDataObjectDeserializer();
-        var stripeObject = dataObjectDeserializer.getObject()
-                .orElseGet(() -> {
-                    log.debug("getObject() vide, fallback sur deserializeUnsafe()");
-                    try {
-                        return dataObjectDeserializer.deserializeUnsafe();
-                    } catch (EventDataObjectDeserializationException e) {
-                        log.error("Erreur lors de la désérialisation : {}", e.getMessage());
-                        throw new RuntimeException("Impossible de désérialiser l'objet Stripe", e);
-                    }
-                });
+        var stripeObject =
+                dataObjectDeserializer
+                        .getObject()
+                        .orElseGet(
+                                () -> {
+                                    log.debug("getObject() vide, fallback sur deserializeUnsafe()");
+                                    try {
+                                        return dataObjectDeserializer.deserializeUnsafe();
+                                    } catch (EventDataObjectDeserializationException e) {
+                                        log.error(
+                                                "Erreur lors de la désérialisation : {}",
+                                                e.getMessage());
+                                        throw new RuntimeException(
+                                                "Impossible de désérialiser l'objet Stripe", e);
+                                    }
+                                });
 
         // 2. Vérifier que l'objet est bien une Session
         if (!(stripeObject instanceof Session)) {
-            log.error("L'objet Stripe n'est pas une Session : {}", stripeObject.getClass().getName());
+            log.error(
+                    "L'objet Stripe n'est pas une Session : {}", stripeObject.getClass().getName());
             throw new RuntimeException("Objet Stripe invalide : attendu Session");
         }
 
@@ -127,15 +132,12 @@ public class PaymentWebhookController {
         // 5. Valider la commande (passer le statut à COMPLETED)
         log.info("Validation de la commande : {}", orderId);
         Order order = orderService.validateOrder(orderId);
-        
+
         // 6. Envoyer un email de confirmation au client
         log.info("Envoi de l'email de confirmation pour la commande : {}", orderId);
         emailService.sendOrderConfirmation(
-                order.getUser().getEmail(),
-                order.getTotalAmount(),
-                orderId
-        );
-        
+                order.getUser().getEmail(), order.getTotalAmount(), orderId);
+
         log.info("Commande validée et email envoyé : {}", orderId);
     }
 }

@@ -12,4 +12,3 @@ import lombok.NoArgsConstructor;
 public class PaymentResponse {
     private String url; // URL de redirection vers Stripe Checkout
 }
-

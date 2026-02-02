@@ -8,13 +8,12 @@ import com.prodify.api.model.Role;
 import com.prodify.api.model.User;
 import com.prodify.api.repository.ProducerRepository;
 import com.prodify.api.repository.UserRepository;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -27,19 +26,21 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final EmailService emailService;
 
-    // Méthode Inscription (existante, on change juste le type de retour pour renvoyer le token direct !)
+    // Méthode Inscription (existante, on change juste le type de retour pour renvoyer le token
+    // direct !)
     public AuthenticationResponse register(RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new RuntimeException("Cet email est déjà utilisé");
         }
 
-        var user = User.builder()
-                .firstName(request.getFirstName())
-                .lastName(request.getLastName())
-                .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.USER)
-                .build();
+        var user =
+                User.builder()
+                        .firstName(request.getFirstName())
+                        .lastName(request.getLastName())
+                        .email(request.getEmail())
+                        .password(passwordEncoder.encode(request.getPassword()))
+                        .role(Role.USER)
+                        .build();
 
         userRepository.save(user);
 
@@ -50,34 +51,23 @@ public class AuthenticationService {
         String jwtToken = jwtService.generateToken(user);
         UserDTO userDTO = convertToUserDTO(user);
 
-        return AuthenticationResponse.builder()
-                .token(jwtToken)
-                .user(userDTO)
-                .build();
+        return AuthenticationResponse.builder().token(jwtToken).user(userDTO).build();
     }
 
     // Méthode Connexion (Nouvelle !)
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         // Cette ligne fait tout le travail : vérifie email ET mot de passe
         authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getEmail(),
-                        request.getPassword()
-                )
-        );
+                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 
         // Si on arrive ici, c'est que le user est authentifié, on cherche ses infos
-        var user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow();
+        var user = userRepository.findByEmail(request.getEmail()).orElseThrow();
 
         // On génère son badge d'accès
         var jwtToken = jwtService.generateToken(user);
         var userDTO = convertToUserDTO(user);
 
-        return AuthenticationResponse.builder()
-                .token(jwtToken)
-                .user(userDTO)
-                .build();
+        return AuthenticationResponse.builder().token(jwtToken).user(userDTO).build();
     }
 
     // Convertir User en UserDTO (avec le producerId si existe)

@@ -8,14 +8,13 @@ import com.prodify.api.model.User;
 import com.prodify.api.repository.ProducerRepository;
 import com.prodify.api.repository.TrackRepository;
 import com.prodify.api.specification.TrackSpecification;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-
 import java.text.Normalizer;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 import java.util.regex.Pattern;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
@@ -27,26 +26,32 @@ public class TrackService {
     // --- CRÉATION ---
     public Track createTrack(User user, TrackRequest request) {
         // 1. Récupérer le profil Producteur de l'utilisateur connecté
-        Producer producer = producerRepository.findByUserId(user.getId())
-                .orElseThrow(() -> new RuntimeException("Vous devez créer un profil producteur avant de publier une track."));
+        Producer producer =
+                producerRepository
+                        .findByUserId(user.getId())
+                        .orElseThrow(
+                                () ->
+                                        new RuntimeException(
+                                                "Vous devez créer un profil producteur avant de publier une track."));
 
         // 2. Générer le slug (URL) unique
         String slug = generateSlug(request.getTitle());
 
         // 3. Créer la Track
-        Track track = Track.builder()
-                .title(request.getTitle())
-                .slug(slug)
-                .description(request.getDescription())
-                .price(request.getPrice())
-                .bpm(request.getBpm())
-                .genre(request.getGenre())
-                .mood(request.getMood())
-                .coverImageUrl(request.getCoverImageUrl())
-                .audioUrl(request.getAudioUrl())
-                .producer(producer) // On lie la track au producteur
-                .isSold(false)      // Par défaut, pas encore vendue
-                .build();
+        Track track =
+                Track.builder()
+                        .title(request.getTitle())
+                        .slug(slug)
+                        .description(request.getDescription())
+                        .price(request.getPrice())
+                        .bpm(request.getBpm())
+                        .genre(request.getGenre())
+                        .mood(request.getMood())
+                        .coverImageUrl(request.getCoverImageUrl())
+                        .audioUrl(request.getAudioUrl())
+                        .producer(producer) // On lie la track au producteur
+                        .isSold(false) // Par défaut, pas encore vendue
+                        .build();
 
         return trackRepository.save(track);
     }
@@ -57,7 +62,8 @@ public class TrackService {
     }
 
     public Track getTrackById(UUID id) {
-        return trackRepository.findById(id)
+        return trackRepository
+                .findById(id)
                 .orElseThrow(() -> new RuntimeException("Track introuvable"));
     }
 
@@ -79,12 +85,19 @@ public class TrackService {
     // --- SUPPRESSION ---
     public void deleteTrack(UUID id, User user) {
         // 1. Récupérer la track
-        Track track = trackRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Track introuvable"));
+        Track track =
+                trackRepository
+                        .findById(id)
+                        .orElseThrow(() -> new RuntimeException("Track introuvable"));
 
         // 2. Récupérer le profil producteur de l'utilisateur connecté
-        Producer producer = producerRepository.findByUserId(user.getId())
-                .orElseThrow(() -> new RuntimeException("Vous devez être producteur pour supprimer une track."));
+        Producer producer =
+                producerRepository
+                        .findByUserId(user.getId())
+                        .orElseThrow(
+                                () ->
+                                        new RuntimeException(
+                                                "Vous devez être producteur pour supprimer une track."));
 
         // 3. Vérifier que la track appartient bien au producteur
         if (!track.getProducer().getId().equals(producer.getId())) {
@@ -98,8 +111,10 @@ public class TrackService {
     // --- MISE À JOUR ---
     public Track updateTrack(UUID id, TrackRequest request, User user) {
         // 1. Récupérer la track
-        Track track = trackRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Track introuvable"));
+        Track track =
+                trackRepository
+                        .findById(id)
+                        .orElseThrow(() -> new RuntimeException("Track introuvable"));
 
         // 2. SÉCURITÉ CRITIQUE : Vérifier que la track appartient au producteur connecté
         // On compare l'ID de l'user de la track avec l'ID de l'user connecté
@@ -125,7 +140,7 @@ public class TrackService {
     private String generateSlug(String title) {
         String baseSlug = toSlug(title);
         String finalSlug = baseSlug;
-            
+
         // Si "mon-beat" existe déjà, on tente "mon-beat-123"
         if (trackRepository.existsBySlug(finalSlug)) {
             finalSlug = baseSlug + "-" + System.currentTimeMillis() % 10000;

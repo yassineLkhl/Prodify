@@ -7,4 +7,3 @@ export const paymentService = {
     return response.data.url;
   },
 };
-

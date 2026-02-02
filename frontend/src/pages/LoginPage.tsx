@@ -6,10 +6,10 @@ import { useAuth } from '../context/AuthContext'; // On utilise notre hook !
 export default function LoginPage() {
   const navigate = useNavigate();
   const { login } = useAuth(); // On récupère la fonction login du contexte
-  
+
   const [formData, setFormData] = useState({
     email: '',
-    password: ''
+    password: '',
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -17,7 +17,7 @@ export default function LoginPage() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -30,7 +30,7 @@ export default function LoginPage() {
       await login(formData); // Appel au context
       navigate('/dashboard'); // Redirection vers le dashboard après login
     } catch (err) {
-      setError("Email ou mot de passe incorrect.");
+      setError('Email ou mot de passe incorrect.');
       console.error(err);
     } finally {
       setLoading(false);
@@ -40,7 +40,6 @@ export default function LoginPage() {
   return (
     <div className="flex items-center justify-center min-h-[80vh] px-4">
       <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-xl p-8 shadow-2xl">
-        
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-white mb-2">Bon retour !</h1>
           <p className="text-slate-400">Connectez-vous à votre espace</p>
@@ -90,7 +89,7 @@ export default function LoginPage() {
             disabled={loading}
             className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors mt-6 disabled:opacity-50"
           >
-            {loading ? 'Connexion...' : "Se connecter"}
+            {loading ? 'Connexion...' : 'Se connecter'}
           </button>
         </form>
 

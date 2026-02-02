@@ -8,4 +8,3 @@ public record HealthResponse(String status, OffsetDateTime timestamp, String ver
         return new HealthResponse("OK", OffsetDateTime.now(), version);
     }
 }
-

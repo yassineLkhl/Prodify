@@ -2,12 +2,11 @@ package com.prodify.api.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import lombok.*;
-import org.hibernate.annotations.UuidGenerator;
-
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.UUID;
+import lombok.*;
+import org.hibernate.annotations.UuidGenerator;
 
 @Entity
 @Table(name = "tracks")
@@ -18,16 +17,18 @@ import java.util.UUID;
 @Builder
 public class Track {
 
-    @Id
-    @UuidGenerator
-    private UUID id;
+    @Id @UuidGenerator private UUID id;
 
     // --- RELATION ---
     // Une track appartient à un seul producteur.
     // Un producteur a plusieurs tracks.
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "producer_id", nullable = false)
-    @JsonIgnoreProperties({"user", "createdAt", "updatedAt"}) // Pour éviter d'afficher tout le user du producteur quand on liste les tracks (trop lourd)
+    @JsonIgnoreProperties({
+        "user",
+        "createdAt",
+        "updatedAt"
+    }) // Pour éviter d'afficher tout le user du producteur quand on liste les tracks (trop lourd)
     private Producer producer;
 
     // --- INFOS DE BASE ---
@@ -43,9 +44,9 @@ public class Track {
 
     // --- METADATA MUSIQUE ---
     private Integer bpm; // Battements par minute
-    
+
     private String genre; // ex: "Trap", "Drill", "Boombap"
-    
+
     private String mood; // ex: "Dark", "Happy", "Aggressive"
 
     // --- FICHIERS (URLs stockées) ---
@@ -62,12 +63,11 @@ public class Track {
     private BigDecimal price; // Utiliser BigDecimal pour l'argent !
 
     // --- STATUT ---
-    @Builder.Default
-    private boolean isSold = false; // Si vendu en exclusivité
+    @Builder.Default private boolean isSold = false; // Si vendu en exclusivité
 
     @Column(nullable = false)
     private OffsetDateTime createdAt;
-    
+
     private OffsetDateTime updatedAt;
 
     @PrePersist

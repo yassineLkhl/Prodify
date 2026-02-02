@@ -4,17 +4,17 @@ import com.prodify.api.dto.producer.ProducerRequest;
 import com.prodify.api.model.Producer;
 import com.prodify.api.model.User;
 import com.prodify.api.service.ProducerService;
+import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import java.util.List;
-    import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/producers")
@@ -26,8 +26,9 @@ public class ProducerController {
     @PostMapping
     public ResponseEntity<Producer> createProducer(
             @RequestBody ProducerRequest request,
-            Authentication authentication // <--- C'est ici que Spring nous donne l'utilisateur connecté
-    ) {
+            Authentication
+                    authentication // <--- C'est ici que Spring nous donne l'utilisateur connecté
+            ) {
         // 1. On récupère l'utilisateur depuis le contexte de sécurité
         // Comme notre classe User implémente UserDetails, on peut faire le cast directement.
         User user = (User) authentication.getPrincipal();

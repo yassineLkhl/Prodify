@@ -1,5 +1,6 @@
 package com.prodify.config;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,8 +15,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.List;
-
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -27,29 +26,42 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            // 1. On active la gestion CORS au niveau Sécurité
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-
-            .csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/api/health").permitAll()
-                .requestMatchers("/error").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/producers", "/api/producers/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/tracks", "/api/tracks/**").permitAll()
-                .requestMatchers(HttpMethod.POST, "/api/tracks/search").permitAll()
-                // Fichiers statiques uploadés : lecture publique
-                .requestMatchers(HttpMethod.GET, "/uploads/**").permitAll()
-                // Webhooks Stripe : accès public (appelé par Stripe, pas par le client)
-                .requestMatchers(HttpMethod.POST, "/api/payment/webhook").permitAll()
-                // Upload de fichiers : nécessite authentification (règle par défaut)
-                .anyRequest().authenticated()
-            )
-            .sessionManagement(session -> session
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            )
-            .authenticationProvider(authenticationProvider)
-            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                // 1. On active la gestion CORS au niveau Sécurité
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(
+                        auth ->
+                                auth.requestMatchers("/api/auth/**")
+                                        .permitAll()
+                                        .requestMatchers("/api/health")
+                                        .permitAll()
+                                        .requestMatchers("/error")
+                                        .permitAll()
+                                        .requestMatchers(
+                                                HttpMethod.GET,
+                                                "/api/producers",
+                                                "/api/producers/**")
+                                        .permitAll()
+                                        .requestMatchers(
+                                                HttpMethod.GET, "/api/tracks", "/api/tracks/**")
+                                        .permitAll()
+                                        .requestMatchers(HttpMethod.POST, "/api/tracks/search")
+                                        .permitAll()
+                                        // Fichiers statiques uploadés : lecture publique
+                                        .requestMatchers(HttpMethod.GET, "/uploads/**")
+                                        .permitAll()
+                                        // Webhooks Stripe : accès public (appelé par Stripe, pas
+                                        // par le client)
+                                        .requestMatchers(HttpMethod.POST, "/api/payment/webhook")
+                                        .permitAll()
+                                        // Upload de fichiers : nécessite authentification (règle
+                                        // par défaut)
+                                        .anyRequest()
+                                        .authenticated())
+                .sessionManagement(
+                        session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authenticationProvider(authenticationProvider)
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
