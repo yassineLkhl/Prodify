@@ -1,10 +1,4 @@
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import type { Track } from '../types/track';
 
@@ -159,4 +153,3 @@ export function usePlayer() {
   }
   return context;
 }
-

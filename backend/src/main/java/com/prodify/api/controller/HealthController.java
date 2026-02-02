@@ -21,4 +21,3 @@ public class HealthController {
         return healthService.getHealth();
     }
 }
-

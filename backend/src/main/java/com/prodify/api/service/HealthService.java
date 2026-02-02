@@ -17,4 +17,3 @@ public class HealthService {
         return HealthResponse.okay(applicationVersion);
     }
 }
-

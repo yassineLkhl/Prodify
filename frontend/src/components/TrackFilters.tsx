@@ -8,12 +8,21 @@ interface TrackFiltersProps {
   isLoading?: boolean;
 }
 
-const GENRES = ['Trap', 'Drill', 'Boombap', 'Lofi', 'Boom Bap', 'Hip Hop', 'Trap Latin', 'UK Drill'];
+const GENRES = [
+  'Trap',
+  'Drill',
+  'Boombap',
+  'Lofi',
+  'Boom Bap',
+  'Hip Hop',
+  'Trap Latin',
+  'UK Drill',
+];
 const MOODS = ['Dark', 'Happy', 'Aggressive', 'Chill', 'Energetic', 'Melancholic', 'Uplifting'];
 
 export default function TrackFilters({ onSearch, isLoading = false }: TrackFiltersProps) {
   const [isExpanded, setIsExpanded] = useState(true);
-  
+
   // État local pour chaque champ
   const [titleInput, setTitleInput] = useState('');
   const [genre, setGenre] = useState('');
@@ -64,10 +73,15 @@ export default function TrackFilters({ onSearch, isLoading = false }: TrackFilte
         <div className="flex items-center gap-2">
           <Search size={18} className="text-slate-400" />
           <span className="text-sm font-semibold">
-            Filtres {hasActiveFilters && `(${[titleInput, genre, mood, minBpm, maxBpm, minPrice, maxPrice].filter(Boolean).length})`}
+            Filtres{' '}
+            {hasActiveFilters &&
+              `(${[titleInput, genre, mood, minBpm, maxBpm, minPrice, maxPrice].filter(Boolean).length})`}
           </span>
         </div>
-        <ChevronDown size={18} className={`transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+        <ChevronDown
+          size={18}
+          className={`transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+        />
       </button>
 
       {/* Panneau des filtres */}
@@ -77,9 +91,7 @@ export default function TrackFilters({ onSearch, isLoading = false }: TrackFilte
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4">
             {/* Titre */}
             <div>
-              <label className="block text-xs font-medium text-slate-400 mb-1">
-                Titre
-              </label>
+              <label className="block text-xs font-medium text-slate-400 mb-1">Titre</label>
               <div className="relative">
                 <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-600" />
                 <input
@@ -94,9 +106,7 @@ export default function TrackFilters({ onSearch, isLoading = false }: TrackFilte
 
             {/* Genre */}
             <div>
-              <label className="block text-xs font-medium text-slate-400 mb-1">
-                Genre
-              </label>
+              <label className="block text-xs font-medium text-slate-400 mb-1">Genre</label>
               <select
                 value={genre}
                 onChange={(e) => setGenre(e.target.value)}
@@ -113,9 +123,7 @@ export default function TrackFilters({ onSearch, isLoading = false }: TrackFilte
 
             {/* Mood */}
             <div>
-              <label className="block text-xs font-medium text-slate-400 mb-1">
-                Ambiance
-              </label>
+              <label className="block text-xs font-medium text-slate-400 mb-1">Ambiance</label>
               <select
                 value={mood}
                 onChange={(e) => setMood(e.target.value)}
@@ -138,9 +146,7 @@ export default function TrackFilters({ onSearch, isLoading = false }: TrackFilte
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-4">
             {/* BPM Min */}
             <div>
-              <label className="block text-xs font-medium text-slate-400 mb-1">
-                BPM Min
-              </label>
+              <label className="block text-xs font-medium text-slate-400 mb-1">BPM Min</label>
               <input
                 type="number"
                 placeholder="60"
@@ -154,9 +160,7 @@ export default function TrackFilters({ onSearch, isLoading = false }: TrackFilte
 
             {/* BPM Max */}
             <div>
-              <label className="block text-xs font-medium text-slate-400 mb-1">
-                BPM Max
-              </label>
+              <label className="block text-xs font-medium text-slate-400 mb-1">BPM Max</label>
               <input
                 type="number"
                 placeholder="200"
@@ -170,9 +174,7 @@ export default function TrackFilters({ onSearch, isLoading = false }: TrackFilte
 
             {/* Prix Min */}
             <div>
-              <label className="block text-xs font-medium text-slate-400 mb-1">
-                Prix Min (€)
-              </label>
+              <label className="block text-xs font-medium text-slate-400 mb-1">Prix Min (€)</label>
               <input
                 type="number"
                 placeholder="0"
@@ -186,9 +188,7 @@ export default function TrackFilters({ onSearch, isLoading = false }: TrackFilte
 
             {/* Prix Max */}
             <div>
-              <label className="block text-xs font-medium text-slate-400 mb-1">
-                Prix Max (€)
-              </label>
+              <label className="block text-xs font-medium text-slate-400 mb-1">Prix Max (€)</label>
               <input
                 type="number"
                 placeholder="100"

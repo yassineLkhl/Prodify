@@ -61,9 +61,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem(CART_STORAGE_KEY);
   }, []);
 
-  const isInCart = useCallback((trackId: string) => {
-    return items.some((item) => item.id === trackId);
-  }, [items]);
+  const isInCart = useCallback(
+    (trackId: string) => {
+      return items.some((item) => item.id === trackId);
+    },
+    [items]
+  );
 
   // Calculer le total
   const total = items.reduce((sum, item) => sum + item.price, 0);
@@ -96,4 +99,3 @@ export const useCart = () => {
   }
   return context;
 };
-

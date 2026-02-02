@@ -34,9 +34,9 @@ export default function HomePage() {
     try {
       setIsSearching(true);
       setError(null);
-      
+
       // Si aucun critère, afficher toutes les tracks
-      if (!Object.values(criteria).some(v => v !== undefined && v !== '')) {
+      if (!Object.values(criteria).some((v) => v !== undefined && v !== '')) {
         const data = await trackService.getTracks();
         setTracks(data);
       } else {
@@ -67,10 +67,7 @@ export default function HomePage() {
       {loading && !isSearching && (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {Array.from({ length: 8 }).map((_, index) => (
-            <div
-              key={index}
-              className="h-72 rounded-xl border border-slate-800 bg-slate-900/80"
-            >
+            <div key={index} className="h-72 rounded-xl border border-slate-800 bg-slate-900/80">
               <div className="h-full animate-pulse rounded-xl bg-slate-800/60" />
             </div>
           ))}
@@ -92,7 +89,8 @@ export default function HomePage() {
       {!loading && !error && tracks.length > 0 && (
         <>
           <div className="mb-4 text-sm text-slate-400">
-            {tracks.length} track{tracks.length > 1 ? 's' : ''} trouvée{tracks.length > 1 ? 's' : ''}
+            {tracks.length} track{tracks.length > 1 ? 's' : ''} trouvée
+            {tracks.length > 1 ? 's' : ''}
           </div>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {tracks.map((track) => (

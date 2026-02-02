@@ -13,7 +13,7 @@ api.interceptors.request.use(
   (config) => {
     // On récupère le token stocké dans le navigateur
     const token = localStorage.getItem('token');
-    
+
     // Si un token existe, on l'ajoute au Header Authorization
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;

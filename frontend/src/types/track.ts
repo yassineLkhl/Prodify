@@ -39,4 +39,3 @@ export interface TrackSearchCriteria {
   minPrice?: number;
   maxPrice?: number;
 }
-

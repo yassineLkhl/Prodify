@@ -24,5 +24,5 @@ export const authService = {
   logout: () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-  }
+  },
 };

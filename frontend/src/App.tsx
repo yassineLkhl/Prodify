@@ -21,18 +21,18 @@ function App() {
           <Routes>
             <Route path="/" element={<MainLayout />}>
               <Route index element={<HomePage />} />
-            <Route path="login" element={<LoginPage />} />
-            <Route path="register" element={<RegisterPage />} />
-            <Route path="dashboard" element={<ProducerDashboard />} />
-            <Route path="cart" element={<CartPage />} />
-            <Route path="library" element={<LibraryPage />} />
-            <Route path="p/:slug" element={<ProducerProfilePage />} />
-            <Route path="checkout/success" element={<SuccessPage />} />
-            <Route path="checkout/cancel" element={<CancelPage />} />
-            <Route
-              path="*"
-              element={<div className="p-10 text-white">Page introuvable 404</div>}
-            />
+              <Route path="login" element={<LoginPage />} />
+              <Route path="register" element={<RegisterPage />} />
+              <Route path="dashboard" element={<ProducerDashboard />} />
+              <Route path="cart" element={<CartPage />} />
+              <Route path="library" element={<LibraryPage />} />
+              <Route path="p/:slug" element={<ProducerProfilePage />} />
+              <Route path="checkout/success" element={<SuccessPage />} />
+              <Route path="checkout/cancel" element={<CancelPage />} />
+              <Route
+                path="*"
+                element={<div className="p-10 text-white">Page introuvable 404</div>}
+              />
             </Route>
           </Routes>
         </PlayerProvider>

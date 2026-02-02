@@ -47,9 +47,7 @@ export default function LibraryPage() {
             <LibraryBig className="h-8 w-8 text-blue-500" />
             <h1 className="text-4xl font-bold text-white">Ma Bibliothèque</h1>
           </div>
-          <p className="text-slate-400 text-lg">
-            Retrouvez toutes vos instrumentales achetées
-          </p>
+          <p className="text-slate-400 text-lg">Retrouvez toutes vos instrumentales achetées</p>
         </div>
 
         {/* État Chargement */}

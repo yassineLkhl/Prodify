@@ -1,11 +1,10 @@
 package com.prodify.api.dto.auth;
 
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.UUID;
 
 @Data
 @Builder
@@ -18,4 +17,3 @@ public class UserDTO {
     private String email;
     private UUID producerId; // null si l'utilisateur n'est pas producteur
 }
-

@@ -58,7 +58,7 @@ export default function TrackCard({ track, variant = 'default' }: TrackCardProps
           {track.bpm ? ` · ${track.bpm} BPM` : ''}
         </p>
         <h3 className="text-lg font-semibold text-white truncate">{track.title}</h3>
-        
+
         {/* Nom producteur cliquable */}
         {track.producer?.slug ? (
           <Link
@@ -71,7 +71,7 @@ export default function TrackCard({ track, variant = 'default' }: TrackCardProps
         ) : (
           <p className="text-sm text-slate-400">Prod. {track.producer?.displayName || 'Unknown'}</p>
         )}
-        
+
         {/* Affichage différent selon la variante */}
         <div className="mt-2 flex items-center justify-between">
           {variant === 'default' ? (
@@ -112,5 +112,3 @@ export default function TrackCard({ track, variant = 'default' }: TrackCardProps
     </div>
   );
 }
-
-

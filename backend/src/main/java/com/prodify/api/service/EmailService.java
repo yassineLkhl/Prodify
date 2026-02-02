@@ -1,5 +1,8 @@
 package com.prodify.api.service;
 
+import jakarta.mail.internet.MimeMessage;
+import java.math.BigDecimal;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -7,10 +10,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-
-import jakarta.mail.internet.MimeMessage;
-import java.math.BigDecimal;
-import java.util.UUID;
 
 @Slf4j
 @Service
@@ -30,6 +29,7 @@ public class EmailService {
 
     /**
      * Envoie un email de bienvenue au nouvel utilisateur
+     *
      * @param to Adresse email du destinataire
      * @param firstName Prénom de l'utilisateur
      */
@@ -50,12 +50,17 @@ public class EmailService {
             log.info("Email de bienvenue envoyé à : {}", to);
 
         } catch (Exception e) {
-            log.error("Erreur lors de l'envoi de l'email de bienvenue à {} : {}", to, e.getMessage(), e);
+            log.error(
+                    "Erreur lors de l'envoi de l'email de bienvenue à {} : {}",
+                    to,
+                    e.getMessage(),
+                    e);
         }
     }
 
     /**
      * Envoie une confirmation de commande
+     *
      * @param to Adresse email du destinataire
      * @param amount Montant de la commande
      * @param orderId ID de la commande
@@ -68,7 +73,9 @@ public class EmailService {
 
             helper.setFrom(fromEmail, fromName);
             helper.setTo(to);
-            helper.setSubject("Confirmation de commande #" + orderId.toString().substring(0, 8).toUpperCase());
+            helper.setSubject(
+                    "Confirmation de commande #"
+                            + orderId.toString().substring(0, 8).toUpperCase());
 
             String htmlContent = buildOrderConfirmationEmailHtml(amount, orderId);
             helper.setText(htmlContent, true);
@@ -77,13 +84,15 @@ public class EmailService {
             log.info("Email de confirmation de commande envoyé à : {}", to);
 
         } catch (Exception e) {
-            log.error("Erreur lors de l'envoi de l'email de confirmation à {} : {}", to, e.getMessage(), e);
+            log.error(
+                    "Erreur lors de l'envoi de l'email de confirmation à {} : {}",
+                    to,
+                    e.getMessage(),
+                    e);
         }
     }
 
-    /**
-     * Construit le contenu HTML de l'email de bienvenue
-     */
+    /** Construit le contenu HTML de l'email de bienvenue */
     private String buildWelcomeEmailHtml(String firstName) {
         return "<!DOCTYPE html>\n"
                 + "<html>\n"
@@ -102,7 +111,9 @@ public class EmailService {
                 + "<body>\n"
                 + "    <div class=\"container\">\n"
                 + "        <div class=\"email-body\">\n"
-                + "            <div class=\"header\">Bienvenue sur Prodify, " + firstName + "!</div>\n"
+                + "            <div class=\"header\">Bienvenue sur Prodify, "
+                + firstName
+                + "!</div>\n"
                 + "            <div class=\"content\">\n"
                 + "                <p>Merci d'avoir cree un compte sur <strong>Prodify</strong>, la plateforme de vente d'instrumentales musicales.</p>\n"
                 + "                <p>Ton compte est pret a etre utilise. Voici ce que tu peux faire des maintenant :</p>\n"
@@ -113,7 +124,9 @@ public class EmailService {
                 + "                </ul>\n"
                 + "                <p>Des questions ? N'hesite pas a nous contacter via notre plateforme.</p>\n"
                 + "            </div>\n"
-                + "            <a href=\"" + frontendUrl + "\" class=\"cta-button\">Acceder a Prodify</a>\n"
+                + "            <a href=\""
+                + frontendUrl
+                + "\" class=\"cta-button\">Acceder a Prodify</a>\n"
                 + "            <div class=\"footer\">\n"
                 + "                <p>(c) Prodify - Tous droits reserves</p>\n"
                 + "                <p>Si tu n'as pas cree ce compte, ignores cet email.</p>\n"
@@ -124,13 +137,11 @@ public class EmailService {
                 + "</html>";
     }
 
-    /**
-     * Construit le contenu HTML de l'email de confirmation de commande
-     */
+    /** Construit le contenu HTML de l'email de confirmation de commande */
     private String buildOrderConfirmationEmailHtml(BigDecimal amount, UUID orderId) {
         String orderNum = orderId.toString().substring(0, 8).toUpperCase();
         String amountFormatted = amount.setScale(2, java.math.RoundingMode.HALF_UP).toString();
-        
+
         return "<!DOCTYPE html>\n"
                 + "<html>\n"
                 + "<head>\n"
@@ -157,14 +168,20 @@ public class EmailService {
                 + "                <p>Merci pour ton achat ! Nous avons bien recu ta commande.</p>\n"
                 + "                <div class=\"order-info\">\n"
                 + "                    <p class=\"order-id\">Numero de commande</p>\n"
-                + "                    <p>#<strong>" + orderNum + "</strong></p>\n"
+                + "                    <p>#<strong>"
+                + orderNum
+                + "</strong></p>\n"
                 + "                    <p style=\"margin-top: 15px;\">Montant paye</p>\n"
-                + "                    <p class=\"amount\">" + amountFormatted + " EUR</p>\n"
+                + "                    <p class=\"amount\">"
+                + amountFormatted
+                + " EUR</p>\n"
                 + "                </div>\n"
                 + "                <p>Tes instrumentales sont maintenant disponibles dans ta bibliotheque. Tu peux les telecharger et les utiliser immediatement.</p>\n"
                 + "                <p>Merci de ton soutien ! Nous esperons que tu apprecies les beats que tu as achetes.</p>\n"
                 + "            </div>\n"
-                + "            <a href=\"" + frontendUrl + "/library\" class=\"cta-button\">Acceder a ma bibliotheque</a>\n"
+                + "            <a href=\""
+                + frontendUrl
+                + "/library\" class=\"cta-button\">Acceder a ma bibliotheque</a>\n"
                 + "            <div class=\"footer\">\n"
                 + "                <p>(c) Prodify - Tous droits reserves</p>\n"
                 + "                <p>Questions ? Contacte notre support via la plateforme.</p>\n"

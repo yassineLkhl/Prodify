@@ -8,5 +8,3 @@ import lombok.Data;
 public class UploadResponse {
     private String url;
 }
-
-

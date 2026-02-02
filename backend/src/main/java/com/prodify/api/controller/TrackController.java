@@ -5,13 +5,12 @@ import com.prodify.api.dto.track.TrackSearchCriteria;
 import com.prodify.api.model.Track;
 import com.prodify.api.model.User;
 import com.prodify.api.service.TrackService;
+import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/tracks")
@@ -23,9 +22,7 @@ public class TrackController {
     // 1. Créer une Track (Sécurisé)
     @PostMapping
     public ResponseEntity<Track> createTrack(
-            @RequestBody TrackRequest request,
-            Authentication authentication
-    ) {
+            @RequestBody TrackRequest request, Authentication authentication) {
         User user = (User) authentication.getPrincipal();
         return ResponseEntity.ok(trackService.createTrack(user, request));
     }
@@ -68,18 +65,14 @@ public class TrackController {
     public ResponseEntity<Track> updateTrack(
             @PathVariable UUID id,
             @RequestBody TrackRequest request,
-            Authentication authentication
-    ) {
+            Authentication authentication) {
         User user = (User) authentication.getPrincipal();
         return ResponseEntity.ok(trackService.updateTrack(id, request, user));
     }
 
     // 6. Supprimer une Track (Sécurisé - uniquement le propriétaire)
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTrack(
-            @PathVariable UUID id,
-            Authentication authentication
-    ) {
+    public ResponseEntity<Void> deleteTrack(@PathVariable UUID id, Authentication authentication) {
         User user = (User) authentication.getPrincipal();
         trackService.deleteTrack(id, user);
         return ResponseEntity.noContent().build();

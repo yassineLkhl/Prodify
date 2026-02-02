@@ -1,11 +1,10 @@
 package com.prodify.api.model;
 
 import jakarta.persistence.*;
-import lombok.*;
-import org.hibernate.annotations.UuidGenerator;
-
 import java.math.BigDecimal;
 import java.util.UUID;
+import lombok.*;
+import org.hibernate.annotations.UuidGenerator;
 
 @Entity
 @Table(name = "order_items")
@@ -16,9 +15,7 @@ import java.util.UUID;
 @Builder
 public class OrderItem {
 
-    @Id
-    @UuidGenerator
-    private UUID id;
+    @Id @UuidGenerator private UUID id;
 
     // Relation vers Order (ManyToOne)
     @ManyToOne(fetch = FetchType.LAZY)
@@ -34,4 +31,3 @@ public class OrderItem {
     @Column(nullable = false, precision = 19, scale = 2)
     private BigDecimal price;
 }
-

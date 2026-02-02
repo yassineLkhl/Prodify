@@ -21,9 +21,7 @@ public class OrderController {
 
     @PostMapping
     public ResponseEntity<OrderResponse> createOrder(
-            @RequestBody CreateOrderRequest request,
-            Authentication authentication
-    ) {
+            @RequestBody CreateOrderRequest request, Authentication authentication) {
         // Récupérer l'utilisateur connecté
         User user = (User) authentication.getPrincipal();
 
@@ -33,4 +31,3 @@ public class OrderController {
         return ResponseEntity.ok(orderResponse);
     }
 }
-

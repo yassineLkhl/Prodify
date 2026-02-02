@@ -33,24 +33,25 @@ export default function CartPage() {
       // 1. Créer l'Order
       const trackIds = items.map((item) => item.id);
       const order = await orderService.createOrder(trackIds);
-      
+
       // 2. Initier le checkout Stripe (AVANT de vider le panier)
       const checkoutUrl = await paymentService.initiateCheckout(order.id);
-      
+
       // 3. Vider le panier UNIQUEMENT si le checkout Stripe a réussi
       clearCart();
-      
+
       // 4. Rediriger vers Stripe
       window.location.href = checkoutUrl;
     } catch (err: unknown) {
       // En cas d'erreur, on garde les items dans le panier pour que l'utilisateur puisse réessayer
-      const errorMessage = err instanceof Error
-        ? err.message
-        : 'Erreur lors de la validation de la commande. Veuillez réessayer.';
-      
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : 'Erreur lors de la validation de la commande. Veuillez réessayer.';
+
       setError(errorMessage);
       setLoading(false);
-      
+
       // Log l'erreur pour le debugging
       console.error('Erreur lors du checkout:', err);
     }
@@ -107,9 +108,7 @@ export default function CartPage() {
                     <p className="text-sm text-slate-400">
                       Prod. {track.producer?.displayName || 'Unknown'}
                     </p>
-                    {track.genre && (
-                      <p className="mt-1 text-xs text-slate-500">{track.genre}</p>
-                    )}
+                    {track.genre && <p className="mt-1 text-xs text-slate-500">{track.genre}</p>}
                   </div>
                   <div className="mt-2 flex items-center justify-between">
                     <span className="text-lg font-semibold text-emerald-400">
@@ -135,7 +134,9 @@ export default function CartPage() {
             <h2 className="mb-4 text-xl font-bold text-white">Résumé</h2>
             <div className="mb-4 space-y-2">
               <div className="flex justify-between text-slate-400">
-                <span>Sous-total ({items.length} {items.length === 1 ? 'track' : 'tracks'})</span>
+                <span>
+                  Sous-total ({items.length} {items.length === 1 ? 'track' : 'tracks'})
+                </span>
                 <span>{total.toFixed(2)} €</span>
               </div>
             </div>
@@ -163,4 +164,3 @@ export default function CartPage() {
     </div>
   );
 }
-

@@ -15,4 +15,3 @@ export interface OrderResponse {
 export interface CreateOrderRequest {
   trackIds: string[];
 }
-

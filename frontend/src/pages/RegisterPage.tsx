@@ -5,13 +5,13 @@ import { authService } from '../services/auth.service';
 
 export default function RegisterPage() {
   const navigate = useNavigate();
-  
+
   // États du formulaire
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
     email: '',
-    password: ''
+    password: '',
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -20,7 +20,7 @@ export default function RegisterPage() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -33,11 +33,10 @@ export default function RegisterPage() {
     try {
       // 1. Appel au backend
       await authService.register(formData);
-      
+
       // 2. Si succès, on redirige vers le login
       // (On pourrait aussi connecter l'user directement, mais le flow classique est souvent Register -> Login)
       navigate('/login');
-      
     } catch (err) {
       setError("Une erreur est survenue lors de l'inscription. Vérifiez vos données.");
       console.error(err);
@@ -49,7 +48,6 @@ export default function RegisterPage() {
   return (
     <div className="flex items-center justify-center min-h-[80vh] px-4">
       <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-xl p-8 shadow-2xl">
-        
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-white mb-2">Créer un compte</h1>
           <p className="text-slate-400">Rejoignez la communauté Prodify</p>
@@ -62,7 +60,6 @@ export default function RegisterPage() {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          
           <div className="grid grid-cols-2 gap-4">
             {/* Prénom */}
             <div className="space-y-1">

@@ -9,12 +9,7 @@ interface FileUploadProps {
   currentUrl?: string;
 }
 
-export default function FileUpload({
-  label,
-  accept,
-  onFileSelect,
-  currentUrl,
-}: FileUploadProps) {
+export default function FileUpload({ label, accept, onFileSelect, currentUrl }: FileUploadProps) {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
@@ -45,7 +40,7 @@ export default function FileUpload({
       onFileSelect(url);
       setUploading(false);
     } catch (err) {
-      setError('Erreur lors de l\'upload du fichier.');
+      setError("Erreur lors de l'upload du fichier.");
       setUploading(false);
       setPreview(null);
       setFileName(null);
@@ -90,9 +85,7 @@ export default function FileUpload({
             className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-slate-700 rounded-lg bg-slate-950 cursor-pointer hover:border-blue-500 transition-colors"
           >
             <UploadCloud className="h-8 w-8 text-slate-500 mb-2" />
-            <p className="text-sm text-slate-400">
-              Cliquez pour sélectionner un fichier
-            </p>
+            <p className="text-sm text-slate-400">Cliquez pour sélectionner un fichier</p>
             <p className="text-xs text-slate-500 mt-1">
               {isImage ? 'Image (JPG, PNG, etc.)' : 'Audio (MP3, WAV, etc.)'}
             </p>
@@ -139,9 +132,7 @@ export default function FileUpload({
                   <FileAudio className="h-5 w-5 text-blue-500" />
                 </div>
                 <div>
-                  <p className="text-sm text-white font-medium">
-                    {fileName || 'Fichier audio'}
-                  </p>
+                  <p className="text-sm text-white font-medium">{fileName || 'Fichier audio'}</p>
                   <p className="text-xs text-slate-400">
                     {currentUrl ? 'Fichier uploadé' : 'Prêt à être uploadé'}
                   </p>
@@ -159,13 +150,7 @@ export default function FileUpload({
         </div>
       )}
 
-      {currentUrl && !preview && !fileName && (
-        <input
-          type="hidden"
-          value={currentUrl}
-        />
-      )}
+      {currentUrl && !preview && !fileName && <input type="hidden" value={currentUrl} />}
     </div>
   );
 }
-
